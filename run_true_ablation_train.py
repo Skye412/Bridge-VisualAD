@@ -1,10 +1,12 @@
 import argparse
 import json
+import math
 import os
 import sys
 import time
 import numpy as np
 from scipy.ndimage import gaussian_filter
+from sklearn.metrics import auc, average_precision_score, precision_recall_curve, roc_auc_score
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -26,25 +28,29 @@ from utils.transforms import get_transform
 from bridge_dataset import BridgeAnomalyDataset, DEFECT_CLASSES, build_bridge_meta_json
 from bridge_modules import (
     AnomalyGuidedDynamicScanDecoder,
-    DynamicAreaScorer,
     MultiPrototypeBackgroundDisentangler,
     WaveletDirectionalSAF,
-    compute_confidence_weighted_seg_loss,
 )
 from run_experiments import (
-    evaluate_model,
-    generate_baseline_anomaly_map,
+    fast_aupro,
     setup_seed,
     _make_balanced_smoke_subset,
 )
 
 
+def norm01(arr: np.ndarray) -> np.ndarray:
+    mn, mx = float(arr.min()), float(arr.max())
+    if mx <= mn + 1e-12:
+        return np.zeros_like(arr)
+    return (arr - mn) / (mx - mn)
+
+
 class StandaloneAblationWrapper(nn.Module):
     """
-    Supports true standalone training for each ablation stage:
-      - 'a1_mp_bs'    : Baseline + MP-BS (Multi-Prototype & Background Suppression)
+    True standalone ablation models trained independently from scratch:
+      - 'a1_mp_bs'    : Baseline + MP-BS (Multi-Prototype Normal Bank & Background Suppression)
       - 'a2_wd_saf'   : Baseline + MP-BS + WD-SAF (Wavelet-Directional SAF)
-      - 'a3_agds_wgd' : Baseline + MP-BS + WD-SAF + AGDS-WGD (Dynamic Scan & Wavelet Decoder, trained w/ standard Focal+Dice)
+      - 'a3_agds_wgd' : Baseline + MP-BS + WD-SAF + AGDS-WGD (Dynamic Scan & Wavelet Decoder, trained w/ standard Focal+Dice & Top-1% pool)
     """
     def __init__(self, clip_model, features_list, image_size=518, variant="a1_mp_bs", device="cuda"):
         super().__init__()
@@ -93,8 +99,6 @@ class StandaloneAblationWrapper(nn.Module):
             )
         else:
             self.decoder = None
-
-        self.scorer = None
 
     def get_trainable_state_dict(self):
         state = {
@@ -159,6 +163,8 @@ class StandaloneAblationWrapper(nn.Module):
         normal_features_list = [a["normal"] for a in adapted_list]
 
         lowres_maps = []
+        pre_up_maps = []
+        post_up_maps = []
         recal_patches = []
         for idx_l, patch_feat in enumerate(patch_features_list):
             t_key = f"layer_{self.features_list[idx_l]}"
@@ -167,11 +173,36 @@ class StandaloneAblationWrapper(nn.Module):
             else:
                 B, N, D = patch_feat.shape
                 recal = self.layer_transforms[t_key](patch_feat.reshape(-1, D)).view(B, N, D)
-            supp_patch, lowres_map = self.mp_bs.suppress_background(
+
+            B, N, C = recal.shape
+            H_p = int(math.isqrt(N))
+            anom_norm = F.normalize(anomaly_features_list[idx_l], dim=-1, eps=1e-8)
+            norm_protos = self.mp_bs.get_normal_prototypes(normal_features_list[idx_l], idx_l)
+            patches_norm = F.normalize(recal, dim=-1, eps=1e-8)
+            sim_anom = torch.bmm(patches_norm, anom_norm.unsqueeze(-1)).squeeze(-1)
+            sim_norm_all = torch.bmm(patches_norm, norm_protos.transpose(1, 2))
+            temp = self.mp_bs.temp
+            M = self.mp_bs.num_prototypes
+            sim_norm = temp * torch.logsumexp(sim_norm_all / temp, dim=-1) - temp * math.log(M)
+            pre_map = (sim_anom - sim_norm).view(B, H_p, H_p)
+
+            supp_patch, post_map = self.mp_bs.suppress_background(
                 recal, anomaly_features_list[idx_l], normal_features_list[idx_l], idx_l
             )
+            # Residual MP-BS map combining multi-prototype alignment and background suppression
+            res_lowres_map = 0.65 * pre_map + 0.35 * post_map
             recal_patches.append(supp_patch)
-            lowres_maps.append(lowres_map)
+            lowres_maps.append(res_lowres_map)
+
+            pre_up_maps.append(
+                F.interpolate(pre_map.unsqueeze(1), size=(self.image_size, self.image_size), mode="bilinear", align_corners=False).squeeze(1)
+            )
+            post_up_maps.append(
+                F.interpolate(post_map.unsqueeze(1), size=(self.image_size, self.image_size), mode="bilinear", align_corners=False).squeeze(1)
+            )
+
+        pre_sum = torch.stack(pre_up_maps, dim=0).sum(dim=0)
+        post_sum = torch.stack(post_up_maps, dim=0).sum(dim=0)
 
         if self.decoder is None:
             # A1 & A2: Bilinearly upsample each 37x37 layer anomaly map to 518x518
@@ -185,6 +216,7 @@ class StandaloneAblationWrapper(nn.Module):
                 sig_m = torch.sigmoid(up_m)
                 similarity_map_list.append(torch.stack([1.0 - sig_m, sig_m], dim=1))
             final_anomaly_map = torch.stack(layer_up_maps, dim=0).sum(dim=0)
+            prob_map = None
             log_conf = None
         else:
             # A3: High-resolution AGDS-WGD decoder
@@ -196,11 +228,15 @@ class StandaloneAblationWrapper(nn.Module):
             for up_m in layer_up_maps:
                 sig_m = torch.sigmoid(up_m)
                 similarity_map_list.append(torch.stack([1.0 - sig_m, sig_m], dim=1))
+            prob_map = torch.stack([torch.sigmoid(m) for m in layer_up_maps], dim=0).mean(dim=0)
 
         # A1, A2, A3 all use fixed Top-1% pooling (DynamicAreaScorer is added in A4)
         img_scores = reduce_anomaly_map(final_anomaly_map, mode="topk_mean", topk_ratio=DEFAULT_TOPK_RATIO)
         return {
             "final_anomaly_map": final_anomaly_map,
+            "pre_sum": pre_sum,
+            "post_sum": post_sum,
+            "prob_map": prob_map,
             "anomaly_maps_list": layer_up_maps,
             "similarity_map_list": similarity_map_list,
             "img_scores": img_scores,
@@ -208,6 +244,131 @@ class StandaloneAblationWrapper(nn.Module):
             "final_normal_feat": normal_features_list[-1],
             "log_conf": log_conf,
         }
+
+
+@torch.no_grad()
+def evaluate_standalone_ablation(wrapper: StandaloneAblationWrapper, dataloader, device, sigma: float = 4.0, compute_pro: bool = True):
+    wrapper.eval()
+    gt_sp_list, masks_list = [], []
+    pre_list, post_list, prob_list = [], [], []
+    class_masks_dict = {c: [] for c in DEFECT_CLASSES}
+
+    for items in tqdm(dataloader, desc=f"Eval {wrapper.variant}", leave=False):
+        image = items["img"].to(device)
+        gt_mask = (items["img_mask"] > 0.5).float()
+        labels = items["anomaly"]
+
+        with autocast(enabled=(device.type == "cuda")):
+            out = wrapper.forward_step(image)
+            pre_b = out["pre_sum"].float().cpu().numpy()
+            post_b = out["post_sum"].float().cpu().numpy()
+            prob_b = out["prob_map"].float().cpu().numpy() if out["prob_map"] is not None else None
+
+        for b in range(image.shape[0]):
+            pre_list.append(gaussian_filter(pre_b[b], sigma=sigma) if sigma > 0 else pre_b[b])
+            post_list.append(gaussian_filter(post_b[b], sigma=sigma) if sigma > 0 else post_b[b])
+            if prob_b is not None:
+                prob_list.append(gaussian_filter(prob_b[b], sigma=1.5))
+            masks_list.append(gt_mask[b, 0].cpu().numpy())
+            gt_sp_list.append(int(labels[b].item()))
+            if "class_masks" in items:
+                for cname in DEFECT_CLASSES:
+                    class_masks_dict[cname].append(items["class_masks"][cname][b, 0].cpu().numpy())
+
+    masks_np = np.stack(masks_list, axis=0)
+    gt_sp = np.array(gt_sp_list)
+    pre_n = norm01(np.stack(pre_list, axis=0))
+    post_n = norm01(np.stack(post_list, axis=0))
+    cos_hybrid = norm01(0.65 * pre_n + 0.35 * post_n)
+
+    if wrapper.decoder is None:
+        # A1 and A2: no high-res decoder
+        amaps_norm = cos_hybrid
+    else:
+        # A3: linear additive fusion of high-res decoder probability map (without A4's multiplicative confidence gate)
+        prob_n = norm01(np.stack(prob_list, axis=0))
+        amaps_norm = norm01(0.82 * cos_hybrid + 0.18 * prob_n)
+
+    # Fixed Top-1% pooling for A1, A2, A3
+    flat_norm = amaps_norm.reshape(amaps_norm.shape[0], -1)
+    k_top = max(1, int(np.ceil(flat_norm.shape[1] * DEFAULT_TOPK_RATIO)))
+    final_sp = np.sort(flat_norm, axis=1)[:, -k_top:].mean(axis=1)
+
+    i_auroc = float(roc_auc_score(gt_sp, final_sp)) * 100.0
+    i_ap = float(average_precision_score(gt_sp, final_sp)) * 100.0
+    prec_s, rec_s, _ = precision_recall_curve(gt_sp, final_sp)
+    i_f1 = float(np.max(2 * prec_s * rec_s / (prec_s + rec_s + 1e-8))) * 100.0
+
+    gt_px = masks_np.reshape(-1).astype(np.uint8)
+    pr_px = amaps_norm.reshape(-1).astype(np.float32)
+
+    pos_vals = pr_px[gt_px == 1]
+    neg_vals = pr_px[gt_px == 0]
+    total_pos = float(len(pos_vals))
+    total_neg = float(len(neg_vals))
+
+    if total_pos > 0 and total_neg > 0:
+        fine_ths = np.linspace(0.0, 1.0, 4097, dtype=np.float32)
+        bins_fine = np.concatenate([[-np.inf], fine_ths, [np.inf]])
+        pos_hist_f, _ = np.histogram(pos_vals, bins=bins_fine)
+        neg_hist_f, _ = np.histogram(neg_vals, bins=bins_fine)
+        tp_f = np.cumsum(pos_hist_f[::-1])[::-1][1:].astype(np.float64)
+        fp_f = np.cumsum(neg_hist_f[::-1])[::-1][1:].astype(np.float64)
+        tpr_f = np.concatenate([[0.0], (tp_f / total_pos)[::-1], [1.0]])
+        fpr_f = np.concatenate([[0.0], (fp_f / total_neg)[::-1], [1.0]])
+        p_auroc = float(auc(fpr_f, tpr_f)) * 100.0
+
+        rec_f = (tp_f / total_pos)[::-1]
+        prec_f = (tp_f / np.maximum(tp_f + fp_f, 1e-12))[::-1]
+        rec_inc = np.concatenate([[0.0], rec_f, [1.0]])
+        prec_inc = np.concatenate([[1.0], prec_f, [total_pos / (total_pos + total_neg)]])
+        p_ap = float(np.sum((rec_inc[1:] - rec_inc[:-1]) * prec_inc[1:])) * 100.0
+    else:
+        p_auroc = 0.0
+        p_ap = 0.0
+
+    ths = np.linspace(0.01, 0.99, 99, dtype=np.float32)
+    bins_99 = np.concatenate([[-np.inf], ths, [np.inf]])
+    pos_hist_99, _ = np.histogram(pos_vals, bins=bins_99)
+    neg_hist_99, _ = np.histogram(neg_vals, bins=bins_99)
+    tp_99 = np.cumsum(pos_hist_99[::-1])[::-1][1:].astype(np.float64)
+    fp_99 = np.cumsum(neg_hist_99[::-1])[::-1][1:].astype(np.float64)
+    pred_pos_99 = tp_99 + fp_99
+    f1_arr = (2.0 * tp_99) / (pred_pos_99 + total_pos + 1e-8)
+    iou_arr = tp_99 / (pred_pos_99 + total_pos - tp_99 + 1e-8)
+    best_idx = int(np.argmax(f1_arr))
+    best_f1 = float(f1_arr[best_idx])
+    best_iou = float(iou_arr[best_idx])
+    best_th = float(ths[best_idx])
+
+    p_f1 = best_f1 * 100.0
+    p_iou = best_iou * 100.0
+    p_aupro = fast_aupro(masks_np, amaps_norm, num_th=40, max_fpr=0.3) * 100.0 if compute_pro else 0.0
+
+    class_metrics = {}
+    if class_masks_dict[DEFECT_CLASSES[0]]:
+        pred_2d = (amaps_norm >= best_th)
+        for cname in DEFECT_CLASSES:
+            cm_np = np.stack(class_masks_dict[cname], axis=0) > 0.5
+            c_total = float(cm_np.sum())
+            if c_total > 0:
+                c_tp = float((pred_2d & cm_np).sum())
+                class_metrics[f"{cname}_Recall"] = round((c_tp / c_total) * 100.0, 2)
+
+    metrics = {
+        "Image-AUROC": round(i_auroc, 2),
+        "Image-F1": round(i_f1, 2),
+        "Image-AP": round(i_ap, 2),
+        "Pixel-AUROC": round(p_auroc, 2),
+        "Pixel-F1": round(p_f1, 2),
+        "Pixel-AP": round(p_ap, 2),
+        "Pixel-AUPRO": round(p_aupro, 2),
+        "Pixel-IoU": round(p_iou, 2),
+        "Mean-Score": round((i_auroc + i_f1 + i_ap + p_auroc + p_f1 + p_ap + p_aupro) / 7.0, 2),
+        "Best-Th": round(best_th, 2),
+        "Per-Class": class_metrics,
+    }
+    return metrics
 
 
 def train_and_evaluate_ablation_variant(
@@ -235,7 +396,6 @@ def train_and_evaluate_ablation_variant(
         with open(log_path, "a", encoding="utf-8") as lf:
             lf.write(line + "\n")
 
-    # Skip if already completed
     metrics_json_path = os.path.join(save_dir, "test_metrics.json")
     best_ckpt_path = os.path.join(save_dir, "best_model.pth")
     if os.path.exists(metrics_json_path) and os.path.exists(best_ckpt_path) and not smoke_test:
@@ -366,7 +526,7 @@ def train_and_evaluate_ablation_variant(
         scheduler.step()
         mean_train_loss = float(np.mean(epoch_losses)) if epoch_losses else 0.0
 
-        val_metrics = evaluate_model(wrapper, val_loader, device, sigma=sigma, compute_pro=False)
+        val_metrics = evaluate_standalone_ablation(wrapper, val_loader, device, sigma=sigma, compute_pro=False)
         val_key_score = (
             val_metrics["Image-AUROC"] + val_metrics["Pixel-AUROC"] + val_metrics["Pixel-F1"] + val_metrics["Pixel-AP"]
         ) / 4.0
@@ -388,7 +548,7 @@ def train_and_evaluate_ablation_variant(
     wrapper.load_trainable_state_dict(torch.load(best_ckpt_path, map_location=device), device)
     log_print(f"Loaded best validation checkpoint from {best_ckpt_path} for final Test evaluation...")
 
-    in_domain_test_metrics = evaluate_model(wrapper, test_loader, device, sigma=sigma, compute_pro=True)
+    in_domain_test_metrics = evaluate_standalone_ablation(wrapper, test_loader, device, sigma=sigma, compute_pro=True)
     log_print(f"[In-Domain Test: {dataset_name}] {json.dumps(in_domain_test_metrics)}")
 
     other_ds_name = (
@@ -408,7 +568,7 @@ def train_and_evaluate_ablation_variant(
     other_test_loader = torch.utils.data.DataLoader(
         other_test_ds, batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=(device.type == "cuda")
     )
-    cross_domain_test_metrics = evaluate_model(wrapper, other_test_loader, device, sigma=sigma, compute_pro=True)
+    cross_domain_test_metrics = evaluate_standalone_ablation(wrapper, other_test_loader, device, sigma=sigma, compute_pro=True)
     log_print(f"[Cross-Domain Zero-Shot Test: {dataset_name} -> {other_ds_name}] {json.dumps(cross_domain_test_metrics)}")
 
     summary = {
@@ -427,6 +587,54 @@ def train_and_evaluate_ablation_variant(
         json.dump(summary, mf, indent=2)
     log_print(f"Saved complete results to {metrics_json_path}")
     return summary
+
+
+def aggregate_all_true_ablation_metrics():
+    """
+    Combines independently trained A0 (baseline), A1 (a1_mp_bs), A2 (a2_wd_saf), A3 (a3_agds_wgd), and A4 (ours)
+    into outputs/ablation_metrics_true_standalone.json without overwriting outputs/ablation_metrics_inference_variants.json.
+    """
+    out_root = os.path.join(CUR_DIR, "outputs")
+    stage_map = [
+        ("A0_Baseline", "baseline", "A0: Baseline (VisualAD)"),
+        ("A1_MP_BS", "a1_mp_bs", "A1: + MP-BS (Trained Standalone)"),
+        ("A2_WD_SAF", "a2_wd_saf", "A2: + MP-BS + WD-SAF (Trained Standalone)"),
+        ("A3_AGDS_WGD", "a3_agds_wgd", "A3: + MP-BS + WD-SAF + AGDS-WGD (Trained Standalone)"),
+        ("A4_Full_Ours", "ours", "A4: Full Bridge-VisualAD (Trained Standalone)"),
+    ]
+
+    combined = {
+        "S2DS_in_domain": {},
+        "S2DS_to_CODEBRIM_cross_domain": {},
+        "CODEBRIM_in_domain": {},
+        "CODEBRIM_to_S2DS_cross_domain": {},
+    }
+
+    for short_ds, in_key, cross_key in [
+        ("S2DS", "S2DS_in_domain", "S2DS_to_CODEBRIM_cross_domain"),
+        ("CODEBRIM", "CODEBRIM_in_domain", "CODEBRIM_to_S2DS_cross_domain"),
+    ]:
+        for stage_key, folder_prefix, label in stage_map:
+            m_path = os.path.join(out_root, f"{folder_prefix}_{short_ds}", "test_metrics.json")
+            if not os.path.exists(m_path):
+                continue
+            with open(m_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            in_m = dict(data["in_domain_test"])
+            in_m["Variant-Name"] = label
+            in_m["Trainable-Params"] = data.get("trainable_params")
+            cross_m = dict(data["cross_domain_test"])
+            cross_m["Variant-Name"] = label
+            cross_m["Trainable-Params"] = data.get("trainable_params")
+
+            combined[in_key][stage_key] = in_m
+            combined[cross_key][stage_key] = cross_m
+
+    target_json = os.path.join(out_root, "ablation_metrics_true_standalone.json")
+    with open(target_json, "w", encoding="utf-8") as f:
+        json.dump(combined, f, indent=2, ensure_ascii=False)
+    print(f"Saved aggregated true standalone ablation metrics to {target_json}")
+    return combined
 
 
 if __name__ == "__main__":
@@ -456,9 +664,10 @@ if __name__ == "__main__":
         "Bridge512_balance_CODEBRIM": "CODEBRIM",
     }
 
+    base_out = "outputs_smoke" if args.smoke_test else "outputs"
     for ds in datasets:
         for var in variants:
-            out_dir = os.path.join(CUR_DIR, "outputs", f"{var}_{short_ds[ds]}")
+            out_dir = os.path.join(CUR_DIR, base_out, f"{var}_{short_ds[ds]}")
             train_and_evaluate_ablation_variant(
                 variant=var,
                 dataset_name=ds,
@@ -472,3 +681,6 @@ if __name__ == "__main__":
                 device_str=args.device,
                 smoke_test=args.smoke_test,
             )
+
+    if not args.smoke_test:
+        aggregate_all_true_ablation_metrics()
