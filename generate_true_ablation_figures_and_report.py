@@ -30,7 +30,7 @@ from run_ablation_and_figures import (
     make_gt_color_vis,
     make_heatmap_overlay,
     make_pred_error_overlay,
-    plot_fig4_ablation_quantitative_charts,
+    plot_ablation_quantitative_charts,
     select_best_showcase_indices,
 )
 
@@ -247,8 +247,9 @@ def main():
     os.makedirs(fig_dir, exist_ok=True)
 
     # Plot quantitative charts from independently trained models
-    plot_fig4_ablation_quantitative_charts(
-        comb_metrics,
+    plot_ablation_quantitative_charts(
+        comb_metrics["S2DS_in_domain"],
+        comb_metrics["CODEBRIM_in_domain"],
         os.path.join(fig_dir, "fig4_true_ablation_quantitative_charts.png"),
     )
 

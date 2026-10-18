@@ -1,0 +1,14 @@
+[2026-10-18 23:11:29] === Starting True Standalone Ablation: variant=a1_mp_bs | train_ds=Bridge512_balance_CODEBRIM ===
+[2026-10-18 23:11:39] Trainable parameters (a1_mp_bs): 33,649,692
+[2026-10-18 23:17:55] Epoch [1/8] loss=4.3203 | Val I-AUROC=88.81 P-AUROC=93.07 P-F1=49.76 P-AP=47.54
+[2026-10-18 23:24:09] Epoch [2/8] loss=3.9683 | Val I-AUROC=92.11 P-AUROC=95.60 P-F1=58.05 P-AP=61.55
+[2026-10-18 23:30:24] Epoch [3/8] loss=3.8502 | Val I-AUROC=92.23 P-AUROC=95.99 P-F1=61.20 P-AP=66.96
+[2026-10-18 23:36:39] Epoch [4/8] loss=3.7813 | Val I-AUROC=92.48 P-AUROC=96.56 P-F1=64.07 P-AP=70.43
+[2026-10-18 23:42:55] Epoch [5/8] loss=3.7146 | Val I-AUROC=92.32 P-AUROC=97.46 P-F1=67.82 P-AP=74.92
+[2026-10-18 23:49:10] Epoch [6/8] loss=3.6739 | Val I-AUROC=92.77 P-AUROC=97.38 P-F1=67.69 P-AP=74.78
+[2026-10-18 23:55:25] Epoch [7/8] loss=3.6302 | Val I-AUROC=93.07 P-AUROC=97.71 P-F1=69.60 P-AP=77.88
+[2026-10-19 00:01:41] Epoch [8/8] loss=3.6016 | Val I-AUROC=92.84 P-AUROC=97.07 P-F1=67.39 P-AP=74.99
+[2026-10-19 00:01:41] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/a1_mp_bs_CODEBRIM/best_model.pth for final Test evaluation...
+[2026-10-19 00:03:19] [In-Domain Test: Bridge512_balance_CODEBRIM] {"Image-AUROC": 92.88, "Image-F1": 78.05, "Image-AP": 87.14, "Pixel-AUROC": 95.79, "Pixel-F1": 67.47, "Pixel-AP": 75.17, "Pixel-AUPRO": 73.62, "Pixel-IoU": 50.91, "Mean-Score": 81.45, "Best-Th": 0.34, "Per-Class": {"Crack_Recall": 53.41, "Spalling_Recall": 75.05, "Corrosion_Recall": 97.16, "Efflorescence_Recall": 61.24}}
+[2026-10-19 00:03:57] [Cross-Domain Zero-Shot Test: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 85.03, "Image-F1": 92.51, "Image-AP": 96.19, "Pixel-AUROC": 97.05, "Pixel-F1": 74.18, "Pixel-AP": 78.66, "Pixel-AUPRO": 51.12, "Pixel-IoU": 58.95, "Mean-Score": 82.11, "Best-Th": 0.43, "Per-Class": {"Crack_Recall": 50.53, "Spalling_Recall": 85.73, "Corrosion_Recall": 74.91, "Efflorescence_Recall": 70.04}}
+[2026-10-19 00:03:57] Saved complete results to /home/skye/data/Skye/visualad/outputs/a1_mp_bs_CODEBRIM/test_metrics.json

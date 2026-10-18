@@ -1,0 +1,14 @@
+[2026-10-19 06:19:43] === Starting True Standalone Ablation: variant=a3_agds_wgd | train_ds=Bridge512_balance_CODEBRIM ===
+[2026-10-19 06:19:53] Trainable parameters (a3_agds_wgd): 36,858,312
+[2026-10-19 06:27:03] Epoch [1/8] loss=4.3220 | Val I-AUROC=89.54 P-AUROC=94.22 P-F1=51.25 P-AP=49.59
+[2026-10-19 06:34:11] Epoch [2/8] loss=3.9070 | Val I-AUROC=89.24 P-AUROC=95.40 P-F1=55.95 P-AP=59.74
+[2026-10-19 06:41:19] Epoch [3/8] loss=3.7477 | Val I-AUROC=89.58 P-AUROC=96.52 P-F1=60.63 P-AP=66.78
+[2026-10-19 06:48:26] Epoch [4/8] loss=3.5966 | Val I-AUROC=90.88 P-AUROC=97.25 P-F1=67.40 P-AP=74.79
+[2026-10-19 06:55:33] Epoch [5/8] loss=3.4471 | Val I-AUROC=91.76 P-AUROC=97.07 P-F1=64.63 P-AP=72.93
+[2026-10-19 07:02:40] Epoch [6/8] loss=3.3301 | Val I-AUROC=91.37 P-AUROC=96.97 P-F1=66.28 P-AP=74.45
+[2026-10-19 07:09:47] Epoch [7/8] loss=3.2251 | Val I-AUROC=92.23 P-AUROC=97.01 P-F1=66.40 P-AP=73.57
+[2026-10-19 07:16:54] Epoch [8/8] loss=3.1792 | Val I-AUROC=92.06 P-AUROC=97.45 P-F1=69.45 P-AP=75.22
+[2026-10-19 07:16:55] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/a3_agds_wgd_CODEBRIM/best_model.pth for final Test evaluation...
+[2026-10-19 07:18:51] [In-Domain Test: Bridge512_balance_CODEBRIM] {"Image-AUROC": 91.84, "Image-F1": 76.04, "Image-AP": 86.31, "Pixel-AUROC": 95.74, "Pixel-F1": 71.0, "Pixel-AP": 78.12, "Pixel-AUPRO": 79.77, "Pixel-IoU": 55.04, "Mean-Score": 82.69, "Best-Th": 0.4, "Per-Class": {"Crack_Recall": 49.58, "Spalling_Recall": 74.44, "Corrosion_Recall": 95.26, "Efflorescence_Recall": 55.69}}
+[2026-10-19 07:19:34] [Cross-Domain Zero-Shot Test: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 88.41, "Image-F1": 93.4, "Image-AP": 96.89, "Pixel-AUROC": 96.99, "Pixel-F1": 74.62, "Pixel-AP": 76.56, "Pixel-AUPRO": 66.9, "Pixel-IoU": 59.52, "Mean-Score": 84.82, "Best-Th": 0.4, "Per-Class": {"Crack_Recall": 75.0, "Spalling_Recall": 83.29, "Corrosion_Recall": 76.02, "Efflorescence_Recall": 73.71}}
+[2026-10-19 07:19:34] Saved complete results to /home/skye/data/Skye/visualad/outputs/a3_agds_wgd_CODEBRIM/test_metrics.json

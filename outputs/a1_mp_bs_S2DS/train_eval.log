@@ -1,0 +1,14 @@
+[2026-10-18 21:28:40] === Starting True Standalone Ablation: variant=a1_mp_bs | train_ds=Bridge512_balance_S2DS ===
+[2026-10-18 21:28:50] Trainable parameters (a1_mp_bs): 33,649,692
+[2026-10-18 21:32:16] Epoch [1/8] loss=4.2359 | Val I-AUROC=95.68 P-AUROC=95.59 P-F1=74.68 P-AP=77.16
+[2026-10-18 21:35:41] Epoch [2/8] loss=3.7383 | Val I-AUROC=96.62 P-AUROC=96.91 P-F1=79.28 P-AP=83.87
+[2026-10-18 21:39:07] Epoch [3/8] loss=3.6020 | Val I-AUROC=96.98 P-AUROC=98.07 P-F1=85.30 P-AP=89.81
+[2026-10-18 21:42:32] Epoch [4/8] loss=3.5293 | Val I-AUROC=96.57 P-AUROC=98.25 P-F1=86.01 P-AP=90.94
+[2026-10-18 21:45:58] Epoch [5/8] loss=3.4679 | Val I-AUROC=96.67 P-AUROC=98.39 P-F1=86.75 P-AP=92.08
+[2026-10-18 21:49:23] Epoch [6/8] loss=3.4180 | Val I-AUROC=96.98 P-AUROC=98.58 P-F1=87.64 P-AP=93.20
+[2026-10-18 21:52:48] Epoch [7/8] loss=3.3815 | Val I-AUROC=96.84 P-AUROC=98.49 P-F1=87.07 P-AP=92.66
+[2026-10-18 21:56:13] Epoch [8/8] loss=3.3494 | Val I-AUROC=96.49 P-AUROC=98.67 P-F1=88.01 P-AP=93.81
+[2026-10-18 21:56:13] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/a1_mp_bs_S2DS/best_model.pth for final Test evaluation...
+[2026-10-18 21:57:07] [In-Domain Test: Bridge512_balance_S2DS] {"Image-AUROC": 94.28, "Image-F1": 96.2, "Image-AP": 98.7, "Pixel-AUROC": 98.46, "Pixel-F1": 83.68, "Pixel-AP": 89.76, "Pixel-AUPRO": 82.23, "Pixel-IoU": 71.94, "Mean-Score": 91.9, "Best-Th": 0.46, "Per-Class": {"Crack_Recall": 74.62, "Spalling_Recall": 92.38, "Corrosion_Recall": 86.87, "Efflorescence_Recall": 55.14}}
+[2026-10-18 22:00:19] [Cross-Domain Zero-Shot Test: Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 82.89, "Image-F1": 66.44, "Image-AP": 65.39, "Pixel-AUROC": 88.19, "Pixel-F1": 49.31, "Pixel-AP": 51.39, "Pixel-AUPRO": 70.66, "Pixel-IoU": 32.72, "Mean-Score": 67.75, "Best-Th": 0.29, "Per-Class": {"Crack_Recall": 56.6, "Spalling_Recall": 78.65, "Corrosion_Recall": 96.61, "Efflorescence_Recall": 8.7}}
+[2026-10-18 22:00:19] Saved complete results to /home/skye/data/Skye/visualad/outputs/a1_mp_bs_S2DS/test_metrics.json
