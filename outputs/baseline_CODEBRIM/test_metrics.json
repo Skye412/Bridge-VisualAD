@@ -1,0 +1,173 @@
+{
+  "variant": "baseline",
+  "train_dataset": "Bridge512_balance_CODEBRIM",
+  "epochs": 8,
+  "batch_size": 4,
+  "accum_steps": 2,
+  "trainable_params": 31522836,
+  "in_domain_test": {
+    "Image-AUROC": 91.8,
+    "Image-F1": 79.92,
+    "Image-AP": 86.54,
+    "Pixel-AUROC": 95.46,
+    "Pixel-F1": 64.46,
+    "Pixel-AP": 72.17,
+    "Pixel-AUPRO": 73.71,
+    "Pixel-IoU": 47.56,
+    "Mean-Score": 80.58,
+    "Per-Class": {
+      "Crack_Recall": 49.62,
+      "Spalling_Recall": 78.4,
+      "Corrosion_Recall": 97.21,
+      "Efflorescence_Recall": 57.06
+    }
+  },
+  "cross_domain_test_dataset": "Bridge512_balance_S2DS",
+  "cross_domain_test": {
+    "Image-AUROC": 83.13,
+    "Image-F1": 91.78,
+    "Image-AP": 95.97,
+    "Pixel-AUROC": 96.43,
+    "Pixel-F1": 72.84,
+    "Pixel-AP": 73.2,
+    "Pixel-AUPRO": 42.12,
+    "Pixel-IoU": 57.28,
+    "Mean-Score": 79.35,
+    "Per-Class": {
+      "Crack_Recall": 33.47,
+      "Spalling_Recall": 83.09,
+      "Corrosion_Recall": 81.11,
+      "Efflorescence_Recall": 73.53
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 4.3407,
+      "val": {
+        "Image-AUROC": 88.26,
+        "Image-F1": 72.92,
+        "Image-AP": 74.89,
+        "Pixel-AUROC": 92.69,
+        "Pixel-F1": 46.29,
+        "Pixel-AP": 44.58,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 30.12,
+        "Mean-Score": 59.95,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 2,
+      "train_loss": 4.0107,
+      "val": {
+        "Image-AUROC": 90.47,
+        "Image-F1": 76.26,
+        "Image-AP": 80.82,
+        "Pixel-AUROC": 94.45,
+        "Pixel-F1": 52.44,
+        "Pixel-AP": 55.33,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 35.54,
+        "Mean-Score": 64.25,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 3,
+      "train_loss": 3.8997,
+      "val": {
+        "Image-AUROC": 92.37,
+        "Image-F1": 79.43,
+        "Image-AP": 85.71,
+        "Pixel-AUROC": 93.82,
+        "Pixel-F1": 50.74,
+        "Pixel-AP": 56.6,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 33.99,
+        "Mean-Score": 65.53,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 4,
+      "train_loss": 3.826,
+      "val": {
+        "Image-AUROC": 91.48,
+        "Image-F1": 77.7,
+        "Image-AP": 83.69,
+        "Pixel-AUROC": 95.32,
+        "Pixel-F1": 57.14,
+        "Pixel-AP": 61.85,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 39.99,
+        "Mean-Score": 66.74,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 5,
+      "train_loss": 3.759,
+      "val": {
+        "Image-AUROC": 92.88,
+        "Image-F1": 81.37,
+        "Image-AP": 88.16,
+        "Pixel-AUROC": 96.26,
+        "Pixel-F1": 61.28,
+        "Pixel-AP": 67.36,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 44.17,
+        "Mean-Score": 69.62,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 6,
+      "train_loss": 3.7063,
+      "val": {
+        "Image-AUROC": 92.67,
+        "Image-F1": 79.84,
+        "Image-AP": 87.51,
+        "Pixel-AUROC": 96.71,
+        "Pixel-F1": 63.33,
+        "Pixel-AP": 69.43,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 46.34,
+        "Mean-Score": 69.93,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 7,
+      "train_loss": 3.6658,
+      "val": {
+        "Image-AUROC": 92.72,
+        "Image-F1": 80.0,
+        "Image-AP": 87.77,
+        "Pixel-AUROC": 96.53,
+        "Pixel-F1": 62.36,
+        "Pixel-AP": 69.28,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 45.3,
+        "Mean-Score": 69.81,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 8,
+      "train_loss": 3.6345,
+      "val": {
+        "Image-AUROC": 91.82,
+        "Image-F1": 78.57,
+        "Image-AP": 86.99,
+        "Pixel-AUROC": 97.22,
+        "Pixel-F1": 65.74,
+        "Pixel-AP": 74.05,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 48.97,
+        "Mean-Score": 70.63,
+        "Per-Class": {}
+      }
+    }
+  ]
+}

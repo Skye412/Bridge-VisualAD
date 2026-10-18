@@ -1,0 +1,14 @@
+[2026-10-18 01:07:10] === Starting Experiment: variant=baseline | train_ds=Bridge512_balance_CODEBRIM | device=cuda:0 ===
+[2026-10-18 01:07:21] Trainable parameters (baseline): 31,522,836
+[2026-10-18 01:14:56] Epoch [1/8] loss=4.3407 | Val I-AUROC=88.26 P-AUROC=92.69 P-F1=46.29 P-AP=44.58
+[2026-10-18 01:22:23] Epoch [2/8] loss=4.0107 | Val I-AUROC=90.47 P-AUROC=94.45 P-F1=52.44 P-AP=55.33
+[2026-10-18 01:29:53] Epoch [3/8] loss=3.8997 | Val I-AUROC=92.37 P-AUROC=93.82 P-F1=50.74 P-AP=56.60
+[2026-10-18 01:37:22] Epoch [4/8] loss=3.8260 | Val I-AUROC=91.48 P-AUROC=95.32 P-F1=57.14 P-AP=61.85
+[2026-10-18 01:44:51] Epoch [5/8] loss=3.7590 | Val I-AUROC=92.88 P-AUROC=96.26 P-F1=61.28 P-AP=67.36
+[2026-10-18 01:52:19] Epoch [6/8] loss=3.7063 | Val I-AUROC=92.67 P-AUROC=96.71 P-F1=63.33 P-AP=69.43
+[2026-10-18 01:59:46] Epoch [7/8] loss=3.6658 | Val I-AUROC=92.72 P-AUROC=96.53 P-F1=62.36 P-AP=69.28
+[2026-10-18 02:07:12] Epoch [8/8] loss=3.6345 | Val I-AUROC=91.82 P-AUROC=97.22 P-F1=65.74 P-AP=74.05
+[2026-10-18 02:07:13] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/baseline_CODEBRIM/best_model.pth for final Test evaluation...
+[2026-10-18 02:12:03] [In-Domain Test: Bridge512_balance_CODEBRIM] {"Image-AUROC": 91.8, "Image-F1": 79.92, "Image-AP": 86.54, "Pixel-AUROC": 95.46, "Pixel-F1": 64.46, "Pixel-AP": 72.17, "Pixel-AUPRO": 73.71, "Pixel-IoU": 47.56, "Mean-Score": 80.58, "Per-Class": {"Crack_Recall": 49.62, "Spalling_Recall": 78.4, "Corrosion_Recall": 97.21, "Efflorescence_Recall": 57.06}}
+[2026-10-18 02:14:38] [Cross-Domain Zero-Shot Test: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 83.13, "Image-F1": 91.78, "Image-AP": 95.97, "Pixel-AUROC": 96.43, "Pixel-F1": 72.84, "Pixel-AP": 73.2, "Pixel-AUPRO": 42.12, "Pixel-IoU": 57.28, "Mean-Score": 79.35, "Per-Class": {"Crack_Recall": 33.47, "Spalling_Recall": 83.09, "Corrosion_Recall": 81.11, "Efflorescence_Recall": 73.53}}
+[2026-10-18 02:14:38] Saved complete results to /home/skye/data/Skye/visualad/outputs/baseline_CODEBRIM/test_metrics.json

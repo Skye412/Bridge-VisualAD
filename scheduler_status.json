@@ -1,0 +1,17 @@
+{
+  "daemon_pid": 2075797,
+  "state": "all_completed",
+  "completed_experiments": [
+    "baseline_S2DS",
+    "baseline_CODEBRIM",
+    "ours_S2DS",
+    "ours_CODEBRIM"
+  ],
+  "current_experiment": null,
+  "updated_at": "2026-10-18 03:47:20",
+  "gpu_reason": "Foreign process still active: v3_post_training.py (used=4375MiB, free=11770MiB)",
+  "free_mib": 11770,
+  "used_mib": 4375,
+  "started_current_at": "2026-10-18 02:46:50",
+  "report_file": "/home/skye/data/Skye/visualad/FINAL_COMPARISON_REPORT.md"
+}

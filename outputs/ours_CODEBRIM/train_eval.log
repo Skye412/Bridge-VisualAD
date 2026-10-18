@@ -1,0 +1,14 @@
+[2026-10-18 02:46:54] === Starting Experiment: variant=ours | train_ds=Bridge512_balance_CODEBRIM | device=cuda:0 ===
+[2026-10-18 02:47:04] Trainable parameters (ours): 36,858,459
+[2026-10-18 02:54:55] Epoch [1/8] loss=8.1889 | Val I-AUROC=90.57 P-AUROC=94.95 P-F1=57.04 P-AP=58.70
+[2026-10-18 03:02:57] Epoch [2/8] loss=6.5817 | Val I-AUROC=91.49 P-AUROC=96.46 P-F1=71.02 P-AP=77.48
+[2026-10-18 03:11:04] Epoch [3/8] loss=6.1229 | Val I-AUROC=92.45 P-AUROC=96.19 P-F1=71.16 P-AP=75.52
+[2026-10-18 03:17:59] Epoch [4/8] loss=5.8505 | Val I-AUROC=91.02 P-AUROC=97.52 P-F1=75.65 P-AP=80.91
+[2026-10-18 03:24:57] Epoch [5/8] loss=5.6188 | Val I-AUROC=91.06 P-AUROC=97.13 P-F1=75.35 P-AP=82.16
+[2026-10-18 03:31:53] Epoch [6/8] loss=5.4774 | Val I-AUROC=90.84 P-AUROC=96.53 P-F1=77.87 P-AP=83.16
+[2026-10-18 03:38:49] Epoch [7/8] loss=5.2367 | Val I-AUROC=89.98 P-AUROC=95.89 P-F1=74.84 P-AP=78.72
+[2026-10-18 03:45:47] Epoch [8/8] loss=4.2375 | Val I-AUROC=92.37 P-AUROC=93.89 P-F1=75.76 P-AP=79.28
+[2026-10-18 03:45:47] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/ours_CODEBRIM/best_model.pth for final Test evaluation...
+[2026-10-18 03:46:45] [In-Domain Test: Bridge512_balance_CODEBRIM] {"Image-AUROC": 93.45, "Image-F1": 78.8, "Image-AP": 87.99, "Pixel-AUROC": 94.79, "Pixel-F1": 69.7, "Pixel-AP": 76.3, "Pixel-AUPRO": 77.68, "Pixel-IoU": 53.49, "Mean-Score": 82.67, "Per-Class": {"Crack_Recall": 46.68, "Spalling_Recall": 66.16, "Corrosion_Recall": 85.96, "Efflorescence_Recall": 60.99}}
+[2026-10-18 03:47:18] [Cross-Domain Zero-Shot Test: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 82.62, "Image-F1": 92.73, "Image-AP": 95.23, "Pixel-AUROC": 95.15, "Pixel-F1": 69.89, "Pixel-AP": 74.58, "Pixel-AUPRO": 47.21, "Pixel-IoU": 53.71, "Mean-Score": 79.63, "Per-Class": {"Crack_Recall": 40.1, "Spalling_Recall": 73.26, "Corrosion_Recall": 50.33, "Efflorescence_Recall": 84.98}}
+[2026-10-18 03:47:18] Saved complete results to /home/skye/data/Skye/visualad/outputs/ours_CODEBRIM/test_metrics.json

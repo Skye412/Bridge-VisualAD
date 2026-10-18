@@ -1,0 +1,14 @@
+[2026-10-18 00:21:30] === Starting Experiment: variant=baseline | train_ds=Bridge512_balance_S2DS | device=cuda:0 ===
+[2026-10-18 00:21:40] Trainable parameters (baseline): 31,522,836
+[2026-10-18 00:25:52] Epoch [1/8] loss=4.2802 | Val I-AUROC=95.33 P-AUROC=95.45 P-F1=75.13 P-AP=74.39
+[2026-10-18 00:29:56] Epoch [2/8] loss=3.7462 | Val I-AUROC=96.10 P-AUROC=96.94 P-F1=81.15 P-AP=81.54
+[2026-10-18 00:34:01] Epoch [3/8] loss=3.6308 | Val I-AUROC=95.90 P-AUROC=97.60 P-F1=84.21 P-AP=85.25
+[2026-10-18 00:38:06] Epoch [4/8] loss=3.5564 | Val I-AUROC=96.44 P-AUROC=97.79 P-F1=84.63 P-AP=86.32
+[2026-10-18 00:42:10] Epoch [5/8] loss=3.5042 | Val I-AUROC=96.89 P-AUROC=98.26 P-F1=86.81 P-AP=89.89
+[2026-10-18 00:46:14] Epoch [6/8] loss=3.4529 | Val I-AUROC=97.01 P-AUROC=98.15 P-F1=86.33 P-AP=89.33
+[2026-10-18 00:50:18] Epoch [7/8] loss=3.4170 | Val I-AUROC=96.44 P-AUROC=98.44 P-F1=87.53 P-AP=91.25
+[2026-10-18 00:54:22] Epoch [8/8] loss=3.3850 | Val I-AUROC=97.09 P-AUROC=98.54 P-F1=87.52 P-AP=92.01
+[2026-10-18 00:54:22] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/baseline_S2DS/best_model.pth for final Test evaluation...
+[2026-10-18 00:57:43] [In-Domain Test: Bridge512_balance_S2DS] {"Image-AUROC": 94.35, "Image-F1": 96.59, "Image-AP": 98.69, "Pixel-AUROC": 98.37, "Pixel-F1": 83.26, "Pixel-AP": 88.07, "Pixel-AUPRO": 76.48, "Pixel-IoU": 71.32, "Mean-Score": 90.83, "Per-Class": {"Crack_Recall": 69.66, "Spalling_Recall": 92.05, "Corrosion_Recall": 84.31, "Efflorescence_Recall": 57.68}}
+[2026-10-18 01:07:02] [Cross-Domain Zero-Shot Test: Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 83.44, "Image-F1": 68.62, "Image-AP": 66.67, "Pixel-AUROC": 88.45, "Pixel-F1": 49.79, "Pixel-AP": 51.88, "Pixel-AUPRO": 66.29, "Pixel-IoU": 33.14, "Mean-Score": 67.88, "Per-Class": {"Crack_Recall": 47.15, "Spalling_Recall": 75.45, "Corrosion_Recall": 95.71, "Efflorescence_Recall": 7.91}}
+[2026-10-18 01:07:02] Saved complete results to /home/skye/data/Skye/visualad/outputs/baseline_S2DS/test_metrics.json

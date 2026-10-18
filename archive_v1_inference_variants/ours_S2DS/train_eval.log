@@ -1,0 +1,14 @@
+[2026-10-18 02:14:44] === Starting Experiment: variant=ours | train_ds=Bridge512_balance_S2DS | device=cuda:0 ===
+[2026-10-18 02:14:54] Trainable parameters (ours): 36,858,459
+[2026-10-18 02:18:43] Epoch [1/8] loss=8.3584 | Val I-AUROC=94.83 P-AUROC=96.32 P-F1=77.14 P-AP=81.45
+[2026-10-18 02:22:30] Epoch [2/8] loss=6.5366 | Val I-AUROC=96.20 P-AUROC=98.01 P-F1=85.10 P-AP=91.69
+[2026-10-18 02:26:19] Epoch [3/8] loss=5.6604 | Val I-AUROC=95.78 P-AUROC=98.71 P-F1=88.59 P-AP=94.77
+[2026-10-18 02:30:07] Epoch [4/8] loss=5.0432 | Val I-AUROC=92.42 P-AUROC=98.88 P-F1=90.05 P-AP=93.89
+[2026-10-18 02:33:54] Epoch [5/8] loss=4.5872 | Val I-AUROC=96.64 P-AUROC=98.01 P-F1=87.18 P-AP=93.60
+[2026-10-18 02:37:41] Epoch [6/8] loss=4.2558 | Val I-AUROC=95.97 P-AUROC=98.63 P-F1=89.53 P-AP=95.46
+[2026-10-18 02:41:30] Epoch [7/8] loss=4.0003 | Val I-AUROC=96.05 P-AUROC=98.54 P-F1=89.64 P-AP=95.72
+[2026-10-18 02:45:18] Epoch [8/8] loss=3.7930 | Val I-AUROC=95.51 P-AUROC=98.07 P-F1=89.22 P-AP=94.38
+[2026-10-18 02:45:18] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/ours_S2DS/best_model.pth for final Test evaluation...
+[2026-10-18 02:45:51] [In-Domain Test: Bridge512_balance_S2DS] {"Image-AUROC": 93.0, "Image-F1": 95.25, "Image-AP": 98.28, "Pixel-AUROC": 98.44, "Pixel-F1": 86.07, "Pixel-AP": 91.89, "Pixel-AUPRO": 61.74, "Pixel-IoU": 75.55, "Mean-Score": 89.24, "Per-Class": {"Crack_Recall": 42.59, "Spalling_Recall": 92.05, "Corrosion_Recall": 82.93, "Efflorescence_Recall": 63.51}}
+[2026-10-18 02:46:48] [Cross-Domain Zero-Shot Test: Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 83.6, "Image-F1": 68.17, "Image-AP": 64.53, "Pixel-AUROC": 81.46, "Pixel-F1": 51.41, "Pixel-AP": 47.66, "Pixel-AUPRO": 57.68, "Pixel-IoU": 34.59, "Mean-Score": 64.93, "Per-Class": {"Crack_Recall": 62.64, "Spalling_Recall": 79.78, "Corrosion_Recall": 96.74, "Efflorescence_Recall": 30.6}}
+[2026-10-18 02:46:48] Saved complete results to /home/skye/data/Skye/visualad/outputs/ours_S2DS/test_metrics.json
