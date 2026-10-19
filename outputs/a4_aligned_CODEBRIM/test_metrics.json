@@ -1,0 +1,42 @@
+{
+  "variant": "a4_aligned",
+  "train_dataset": "Bridge512_balance_CODEBRIM",
+  "trainable_params": 36858459,
+  "in_domain_test": {
+    "Image-AUROC": 93.58,
+    "Image-F1": 78.57,
+    "Image-AP": 88.61,
+    "Pixel-AUROC": 95.76,
+    "Pixel-F1": 71.18,
+    "Pixel-AP": 78.32,
+    "Pixel-AUPRO": 79.07,
+    "Pixel-IoU": 55.25,
+    "Mean-Score": 83.58,
+    "Best-Th": 0.39,
+    "Per-Class": {
+      "Crack_Recall": 49.54,
+      "Spalling_Recall": 74.61,
+      "Corrosion_Recall": 95.13,
+      "Efflorescence_Recall": 56.26
+    }
+  },
+  "cross_domain_test_dataset": "Bridge512_balance_S2DS",
+  "cross_domain_test": {
+    "Image-AUROC": 88.55,
+    "Image-F1": 93.44,
+    "Image-AP": 96.94,
+    "Pixel-AUROC": 97.03,
+    "Pixel-F1": 74.75,
+    "Pixel-AP": 77.11,
+    "Pixel-AUPRO": 65.52,
+    "Pixel-IoU": 59.68,
+    "Mean-Score": 84.76,
+    "Best-Th": 0.39,
+    "Per-Class": {
+      "Crack_Recall": 74.89,
+      "Spalling_Recall": 83.81,
+      "Corrosion_Recall": 75.97,
+      "Efflorescence_Recall": 74.3
+    }
+  }
+}
