@@ -38,7 +38,6 @@ def format_row(name, proto, m):
 
 
 def build_all_verified_tables():
-    # 1. Update ablation_metrics_true_standalone.json and ablation_metrics_clean_single_model.json
     stage_specs = [
         ("A0_Baseline", "baseline", "A0 (Baseline: VisualAD)", "8 Ep (Scratch, val-best)"),
         ("A1_MP_BS", "a1_mp_bs", "A1 (+MP-BS)", "8 Ep (Scratch, val-best)"),
@@ -73,7 +72,6 @@ def build_all_verified_tables():
                 m["Trainable-Params"] = d.get("trainable_params")
                 ablation_all[sc][key] = m
 
-            # Also include linear-fusion evaluation for A3_plus_CW and A4_Full_Ours if available
             if "in_domain_test_linear_fusion" in d:
                 for sc, d_field in [(in_sc, "in_domain_test_linear_fusion"), (cross_sc, "cross_domain_test_linear_fusion")]:
                     m_lin = dict(d[d_field])
@@ -89,14 +87,13 @@ def build_all_verified_tables():
     with open(os.path.join(OUT_DIR, "ablation_metrics_clean_single_model.json"), "w", encoding="utf-8") as f:
         json.dump(ablation_all, f, indent=2, ensure_ascii=False)
 
-    # 2. Build Markdown report directly from raw JSONs
     comp_specs = [
         ("Dinomaly (CVPR 2025)", "comp_dinomaly", "10k iters (val-best)"),
         ("AnomalyCLIP (ICLR 2024)", "comp_anomalyclip", "15 Ep (val-best)"),
         ("Bayes-PFL (CVPR 2025)", "comp_bayespfl", "Up to 30 Ep (2-Stg, early-stop)"),
         ("AdaptCLIP (AAAI 2026)", "comp_adaptclip", "15 Ep (val-best)"),
         ("WPFormer (CVPR 2025)", "comp_wpformer", "60 Ep (val-best)"),
-        ("MixerCSeg (CVPR 2026)", "comp_mixercseg", "50 Ep (val-best)"),
+        ("MixerCSeg (CVPR 2026)", "comp_mixercseg", "50 Ep (S2DS) / 8 Ep (CODEBRIM)"),
         ("VisualAD (Baseline, A0)", "baseline", "8 Ep (Scratch, val-best)"),
         ("Bridge-VisualAD (Ours, A4)", "a4_scratch8ep", "8 Ep (Scratch, val-best)"),
     ]
@@ -130,7 +127,8 @@ def build_all_verified_tables():
             d = load_json(os.path.join(OUT_DIR, f"{folder}_{short_ds}", "test_metrics.json"))
             if d is None or field not in d:
                 continue
-            md_lines.append(format_row(name, proto, d[field]))
+            ep_proto = f"{d.get('epochs')} Ep (val-best)" if folder == "comp_mixercseg" else proto
+            md_lines.append(format_row(name, ep_proto, d[field]))
         md_lines.append("")
 
     md_lines.append("## Part II: Progressive Module Ablation (`A0 -> A1 -> A2 -> A3 -> A4`, Standalone 8 Epochs)")
@@ -148,7 +146,7 @@ def build_all_verified_tables():
 
     md_lines.append("## Part III: 8-Epoch Component Ablation (`A3` vs `A3+CW` vs `A3+Scorer` vs `A4`)")
     md_lines.append("")
-    comp_abl_keys = ["A3_AGDS_WGD", "A3_plus_CW", "A3_plus_CW_LinearFusion", "A3_plus_Scorer", "A4_Full_Ours"]
+    comp_abl_keys = ["A3_AGDS_WGD", "A3_plus_CW", "A3_plus_CW_LinearFusion", "A3_plus_Scorer", "A4_Full_Ours", "A4_Full_Ours_LinearFusion"]
     for title, _, _, sc_key in scenarios:
         md_lines.append(f"### {title}")
         md_lines.append("")
@@ -159,7 +157,6 @@ def build_all_verified_tables():
                 md_lines.append(format_row(m["Variant-Name"], m["Protocol"], m))
         md_lines.append("")
 
-    # Macro-average summary across all 4 scenarios
     md_lines.append("## Part IV: 4-Scenario Macro-Average Summary (Direct Arithmetic Mean of the 4 Scenarios)")
     md_lines.append("")
     md_lines.append(
@@ -180,6 +177,46 @@ def build_all_verified_tables():
                 f"| **{name}** | {m7_list[0]:.2f} | {m7_list[1]:.2f} | {m7_list[2]:.2f} | {m7_list[3]:.2f} | "
                 f"**{sum(m7_list)/4.0:.2f}** | **{sum(m5_list)/4.0:.2f}** | **{sum(cr_list)/4.0:.2f}** |"
             )
+    md_lines.append("")
+
+    dacl_data = load_json(os.path.join(OUT_DIR, "dacl10k_v3_zero_shot_results.json"))
+    if dacl_data is not None:
+        md_lines.append("## Part V: Third-Domain Zero-Shot Transfer (`DACL10k-v3 validation`, 975 Images, All 13 Bridge Damages)")
+        md_lines.append("")
+        dacl_order = [
+            ("comp_wpformer", "WPFormer (CVPR 2025)"),
+            ("comp_adaptclip", "AdaptCLIP (AAAI 2026)"),
+            ("baseline", "A0 (VisualAD Baseline)"),
+            ("a1_mp_bs", "A1 (+MP-BS)"),
+            ("a2_wd_saf", "A2 (+MP-BS +WD-SAF)"),
+            ("a3_agds_wgd", "A3 (+MP-BS +WD-SAF +AGDS-WGD)"),
+            ("a3_plus_cw_8ep", "A3 + CW-Loss"),
+            ("a3_plus_scorer_8ep", "A3 + Scorer"),
+            ("a4_scratch8ep", "A4 (Bridge-VisualAD Full)"),
+        ]
+        for dir_key, d_title in [
+            ("S2DS_to_DACL10k", "1. S2DS -> DACL10k-v3 (Zero-Shot)"),
+            ("CODEBRIM_to_DACL10k", "2. CODEBRIM -> DACL10k-v3 (Zero-Shot)"),
+        ]:
+            md_lines.append(f"### {d_title}")
+            md_lines.append("")
+            md_lines.append(
+                "| Model / Method | P-AUROC | P-F1 | P-AP | P-AUPRO | P-AUPRO(Std03) | P-IoU | **Pixel-Mean-4** | P-F1(SrcTh) | Crack | Spall | Rust | Effl | **Shared4-Rec** |"
+            )
+            md_lines.append("| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |")
+            for mk, ml in dacl_order:
+                if mk not in dacl_data.get(dir_key, {}):
+                    continue
+                m = dacl_data[dir_key][mk]["all_13_damages"]
+                s4 = m["Per-Class-Shared4"]
+                md_lines.append(
+                    f"| **{ml}** | {m['Pixel-AUROC']:.2f} | {m['Pixel-F1']:.2f} | {m['Pixel-AP']:.2f} | "
+                    f"{m['Pixel-AUPRO']:.2f} | {m['Pixel-AUPRO-Std03']:.2f} | {m['Pixel-IoU']:.2f} | "
+                    f"**{m['Pixel-Mean-4']:.2f}** | {m['Pixel-F1-at-Source-Th']:.2f} | "
+                    f"{s4['Crack_Recall']:.2f} | {s4['Spalling_Recall']:.2f} | {s4['Corrosion_Recall']:.2f} | "
+                    f"{s4['Efflorescence_Recall']:.2f} | **{s4['Shared4_Macro_Recall']:.2f}** |"
+                )
+            md_lines.append("")
 
     out_md = os.path.join(OUT_DIR, "verified_all_paper_tables.md")
     with open(out_md, "w", encoding="utf-8") as f:

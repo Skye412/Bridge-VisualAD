@@ -1,0 +1,85 @@
+{
+  "method": "MixerCSeg (CVPR 2026)",
+  "variant": "comp_mixercseg",
+  "train_dataset": "Bridge512_balance_CODEBRIM",
+  "epochs": 8,
+  "protocol_note": "8-epoch aligned checkpoint (best_model_8ep.pth)",
+  "trainable_params": 2541882,
+  "in_domain_test": {
+    "Image-AUROC": 79.59,
+    "Image-F1": 62.73,
+    "Image-AP": 63.79,
+    "Pixel-AUROC": 82.93,
+    "Pixel-F1": 46.16,
+    "Pixel-AP": 43.17,
+    "Pixel-AUPRO": 45.13,
+    "Pixel-IoU": 30.0,
+    "Mean-Score": 60.5,
+    "Mean-5": 59.4,
+    "Best-Th": 0.12,
+    "Per-Class": {
+      "Crack_Recall": 35.91,
+      "Spalling_Recall": 51.7,
+      "Corrosion_Recall": 88.23,
+      "Efflorescence_Recall": 36.44
+    }
+  },
+  "cross_domain_test_dataset": "Bridge512_balance_S2DS",
+  "cross_domain_test": {
+    "Image-AUROC": 63.72,
+    "Image-F1": 91.2,
+    "Image-AP": 89.87,
+    "Pixel-AUROC": 89.41,
+    "Pixel-F1": 57.73,
+    "Pixel-AP": 50.77,
+    "Pixel-AUPRO": 8.9,
+    "Pixel-IoU": 40.58,
+    "Mean-Score": 64.51,
+    "Mean-5": 54.11,
+    "Best-Th": 0.16,
+    "Per-Class": {
+      "Crack_Recall": 3.5,
+      "Spalling_Recall": 69.58,
+      "Corrosion_Recall": 80.65,
+      "Efflorescence_Recall": 64.24
+    }
+  },
+  "in_domain_test_8ep": {
+    "Image-AUROC": 79.59,
+    "Image-F1": 62.73,
+    "Image-AP": 63.79,
+    "Pixel-AUROC": 82.93,
+    "Pixel-F1": 46.16,
+    "Pixel-AP": 43.17,
+    "Pixel-AUPRO": 45.13,
+    "Pixel-IoU": 30.0,
+    "Mean-Score": 60.5,
+    "Mean-5": 59.4,
+    "Best-Th": 0.12,
+    "Per-Class": {
+      "Crack_Recall": 35.91,
+      "Spalling_Recall": 51.7,
+      "Corrosion_Recall": 88.23,
+      "Efflorescence_Recall": 36.44
+    }
+  },
+  "cross_domain_test_8ep": {
+    "Image-AUROC": 63.72,
+    "Image-F1": 91.2,
+    "Image-AP": 89.87,
+    "Pixel-AUROC": 89.41,
+    "Pixel-F1": 57.73,
+    "Pixel-AP": 50.77,
+    "Pixel-AUPRO": 8.9,
+    "Pixel-IoU": 40.58,
+    "Mean-Score": 64.51,
+    "Mean-5": 54.11,
+    "Best-Th": 0.16,
+    "Per-Class": {
+      "Crack_Recall": 3.5,
+      "Spalling_Recall": 69.58,
+      "Corrosion_Recall": 80.65,
+      "Efflorescence_Recall": 64.24
+    }
+  }
+}
