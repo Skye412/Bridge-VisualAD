@@ -168,9 +168,9 @@
 
 ## 4. 更新后的可视化图表（100% 匹配 8 轮独立训练数据）
 
-![五阶段独立训练消融定量对比图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig4_true_ablation_quantitative_charts.png)
+![五阶段独立训练消融定量对比图](figures/fig4_true_ablation_quantitative_charts.png)
 
-![五阶段独立训练消融视觉演进图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig3_true_ablation_visual_progression.png)
+![五阶段独立训练消融视觉演进图](figures/fig3_true_ablation_visual_progression.png)
 
 ---
 
