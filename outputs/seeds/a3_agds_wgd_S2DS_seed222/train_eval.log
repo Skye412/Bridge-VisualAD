@@ -1,0 +1,14 @@
+[2026-10-21 20:28:10] === Starting True Standalone Ablation: variant=a3_agds_wgd | train_ds=Bridge512_balance_S2DS ===
+[2026-10-21 20:28:20] Trainable parameters (a3_agds_wgd): 36,858,312
+[2026-10-21 20:32:18] Epoch [1/8] loss=4.2709 | Val I-AUROC=95.40 P-AUROC=94.80 P-F1=72.43 P-AP=73.88
+[2026-10-21 20:36:12] Epoch [2/8] loss=3.6935 | Val I-AUROC=96.45 P-AUROC=97.62 P-F1=83.80 P-AP=86.49
+[2026-10-21 20:40:06] Epoch [3/8] loss=3.4681 | Val I-AUROC=96.98 P-AUROC=98.13 P-F1=85.70 P-AP=90.17
+[2026-10-21 20:44:01] Epoch [4/8] loss=3.2901 | Val I-AUROC=96.72 P-AUROC=98.69 P-F1=88.16 P-AP=93.02
+[2026-10-21 20:47:54] Epoch [5/8] loss=3.0708 | Val I-AUROC=96.91 P-AUROC=98.62 P-F1=87.64 P-AP=92.99
+[2026-10-21 20:51:48] Epoch [6/8] loss=2.8882 | Val I-AUROC=96.54 P-AUROC=98.75 P-F1=88.07 P-AP=93.84
+[2026-10-21 20:55:44] Epoch [7/8] loss=2.7022 | Val I-AUROC=96.52 P-AUROC=98.84 P-F1=89.06 P-AP=94.52
+[2026-10-21 20:59:38] Epoch [8/8] loss=2.5482 | Val I-AUROC=96.69 P-AUROC=98.76 P-F1=88.32 P-AP=94.37
+[2026-10-21 20:59:38] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/seeds/a3_agds_wgd_S2DS_seed222/best_model.pth for final Test evaluation...
+[2026-10-21 21:00:25] [In-Domain Test: Bridge512_balance_S2DS] {"Image-AUROC": 93.54, "Image-F1": 95.66, "Image-AP": 98.48, "Pixel-AUROC": 98.73, "Pixel-F1": 84.92, "Pixel-AP": 90.88, "Pixel-AUPRO": 77.03, "Pixel-IoU": 73.79, "Mean-Score": 91.32, "Best-Th": 0.39, "Per-Class": {"Crack_Recall": 71.61, "Spalling_Recall": 93.86, "Corrosion_Recall": 85.81, "Efflorescence_Recall": 60.51}}
+[2026-10-21 21:03:19] [Cross-Domain Zero-Shot Test: Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 83.97, "Image-F1": 68.42, "Image-AP": 67.76, "Pixel-AUROC": 89.84, "Pixel-F1": 49.2, "Pixel-AP": 52.35, "Pixel-AUPRO": 68.52, "Pixel-IoU": 32.63, "Mean-Score": 68.58, "Best-Th": 0.18, "Per-Class": {"Crack_Recall": 61.04, "Spalling_Recall": 80.73, "Corrosion_Recall": 96.87, "Efflorescence_Recall": 17.0}}
+[2026-10-21 21:03:19] Saved complete results to /home/skye/data/Skye/visualad/outputs/seeds/a3_agds_wgd_S2DS_seed222/test_metrics.json

@@ -1,0 +1,183 @@
+{
+  "variant": "a3_agds_wgd",
+  "train_dataset": "Bridge512_balance_S2DS",
+  "epochs": 8,
+  "batch_size": 4,
+  "accum_steps": 2,
+  "trainable_params": 36858312,
+  "in_domain_test": {
+    "Image-AUROC": 93.54,
+    "Image-F1": 95.66,
+    "Image-AP": 98.48,
+    "Pixel-AUROC": 98.73,
+    "Pixel-F1": 84.92,
+    "Pixel-AP": 90.88,
+    "Pixel-AUPRO": 77.03,
+    "Pixel-IoU": 73.79,
+    "Mean-Score": 91.32,
+    "Best-Th": 0.39,
+    "Per-Class": {
+      "Crack_Recall": 71.61,
+      "Spalling_Recall": 93.86,
+      "Corrosion_Recall": 85.81,
+      "Efflorescence_Recall": 60.51
+    }
+  },
+  "cross_domain_test_dataset": "Bridge512_balance_CODEBRIM",
+  "cross_domain_test": {
+    "Image-AUROC": 83.97,
+    "Image-F1": 68.42,
+    "Image-AP": 67.76,
+    "Pixel-AUROC": 89.84,
+    "Pixel-F1": 49.2,
+    "Pixel-AP": 52.35,
+    "Pixel-AUPRO": 68.52,
+    "Pixel-IoU": 32.63,
+    "Mean-Score": 68.58,
+    "Best-Th": 0.18,
+    "Per-Class": {
+      "Crack_Recall": 61.04,
+      "Spalling_Recall": 80.73,
+      "Corrosion_Recall": 96.87,
+      "Efflorescence_Recall": 17.0
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 4.2709,
+      "val": {
+        "Image-AUROC": 95.4,
+        "Image-F1": 95.81,
+        "Image-AP": 99.07,
+        "Pixel-AUROC": 94.8,
+        "Pixel-F1": 72.43,
+        "Pixel-AP": 73.88,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 56.78,
+        "Mean-Score": 75.91,
+        "Best-Th": 0.29,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 2,
+      "train_loss": 3.6935,
+      "val": {
+        "Image-AUROC": 96.45,
+        "Image-F1": 96.77,
+        "Image-AP": 99.29,
+        "Pixel-AUROC": 97.62,
+        "Pixel-F1": 83.8,
+        "Pixel-AP": 86.49,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 72.12,
+        "Mean-Score": 80.06,
+        "Best-Th": 0.34,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 3,
+      "train_loss": 3.4681,
+      "val": {
+        "Image-AUROC": 96.98,
+        "Image-F1": 97.57,
+        "Image-AP": 99.4,
+        "Pixel-AUROC": 98.13,
+        "Pixel-F1": 85.7,
+        "Pixel-AP": 90.17,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 74.97,
+        "Mean-Score": 81.14,
+        "Best-Th": 0.34,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 4,
+      "train_loss": 3.2901,
+      "val": {
+        "Image-AUROC": 96.72,
+        "Image-F1": 97.05,
+        "Image-AP": 99.36,
+        "Pixel-AUROC": 98.69,
+        "Pixel-F1": 88.16,
+        "Pixel-AP": 93.02,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 78.82,
+        "Mean-Score": 81.86,
+        "Best-Th": 0.46,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 5,
+      "train_loss": 3.0708,
+      "val": {
+        "Image-AUROC": 96.91,
+        "Image-F1": 97.31,
+        "Image-AP": 99.39,
+        "Pixel-AUROC": 98.62,
+        "Pixel-F1": 87.64,
+        "Pixel-AP": 92.99,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 77.99,
+        "Mean-Score": 81.84,
+        "Best-Th": 0.41,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 6,
+      "train_loss": 2.8882,
+      "val": {
+        "Image-AUROC": 96.54,
+        "Image-F1": 96.48,
+        "Image-AP": 99.33,
+        "Pixel-AUROC": 98.75,
+        "Pixel-F1": 88.07,
+        "Pixel-AP": 93.84,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 78.68,
+        "Mean-Score": 81.86,
+        "Best-Th": 0.45,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 7,
+      "train_loss": 2.7022,
+      "val": {
+        "Image-AUROC": 96.52,
+        "Image-F1": 96.76,
+        "Image-AP": 99.31,
+        "Pixel-AUROC": 98.84,
+        "Pixel-F1": 89.06,
+        "Pixel-AP": 94.52,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 80.27,
+        "Mean-Score": 82.14,
+        "Best-Th": 0.42,
+        "Per-Class": {}
+      }
+    },
+    {
+      "epoch": 8,
+      "train_loss": 2.5482,
+      "val": {
+        "Image-AUROC": 96.69,
+        "Image-F1": 97.57,
+        "Image-AP": 99.33,
+        "Pixel-AUROC": 98.76,
+        "Pixel-F1": 88.32,
+        "Pixel-AP": 94.37,
+        "Pixel-AUPRO": 0.0,
+        "Pixel-IoU": 79.08,
+        "Mean-Score": 82.15,
+        "Best-Th": 0.36,
+        "Per-Class": {}
+      }
+    }
+  ]
+}

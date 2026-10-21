@@ -1,0 +1,14 @@
+[2026-10-21 20:00:27] === Starting Experiment: variant=baseline | train_ds=Bridge512_balance_S2DS | device=cuda:0 ===
+[2026-10-21 20:00:38] Trainable parameters (baseline): 31,522,836
+[2026-10-21 20:03:47] Epoch [1/8] loss=4.2775 | Val I-AUROC=95.45 P-AUROC=95.28 P-F1=73.97 P-AP=74.45
+[2026-10-21 20:06:55] Epoch [2/8] loss=3.7576 | Val I-AUROC=96.61 P-AUROC=96.61 P-F1=80.69 P-AP=80.68
+[2026-10-21 20:10:03] Epoch [3/8] loss=3.6553 | Val I-AUROC=96.81 P-AUROC=97.12 P-F1=81.74 P-AP=84.13
+[2026-10-21 20:13:11] Epoch [4/8] loss=3.5761 | Val I-AUROC=97.23 P-AUROC=97.58 P-F1=84.16 P-AP=86.33
+[2026-10-21 20:16:19] Epoch [5/8] loss=3.5182 | Val I-AUROC=96.44 P-AUROC=97.97 P-F1=85.56 P-AP=88.36
+[2026-10-21 20:19:27] Epoch [6/8] loss=3.4673 | Val I-AUROC=96.76 P-AUROC=98.28 P-F1=86.55 P-AP=90.43
+[2026-10-21 20:22:36] Epoch [7/8] loss=3.4226 | Val I-AUROC=97.03 P-AUROC=98.30 P-F1=86.63 P-AP=90.78
+[2026-10-21 20:25:44] Epoch [8/8] loss=3.3954 | Val I-AUROC=96.39 P-AUROC=98.45 P-F1=87.18 P-AP=91.50
+[2026-10-21 20:25:45] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/seeds/baseline_S2DS_seed222/best_model.pth for final Test evaluation...
+[2026-10-21 20:26:16] [In-Domain Test: Bridge512_balance_S2DS] {"Image-AUROC": 93.57, "Image-F1": 95.87, "Image-AP": 98.47, "Pixel-AUROC": 98.28, "Pixel-F1": 82.98, "Pixel-AP": 87.31, "Pixel-AUPRO": 77.89, "Pixel-IoU": 70.91, "Mean-Score": 90.62, "Best-Th": 0.47, "Per-Class": {"Crack_Recall": 73.22, "Spalling_Recall": 92.34, "Corrosion_Recall": 86.92, "Efflorescence_Recall": 60.57}}
+[2026-10-21 20:28:00] [Cross-Domain Zero-Shot Test: Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 83.99, "Image-F1": 68.6, "Image-AP": 67.75, "Pixel-AUROC": 89.69, "Pixel-F1": 50.22, "Pixel-AP": 52.75, "Pixel-AUPRO": 68.26, "Pixel-IoU": 33.53, "Mean-Score": 68.75, "Best-Th": 0.31, "Per-Class": {"Crack_Recall": 58.41, "Spalling_Recall": 80.66, "Corrosion_Recall": 96.6, "Efflorescence_Recall": 12.74}}
+[2026-10-21 20:28:00] Saved complete results to /home/skye/data/Skye/visualad/outputs/seeds/baseline_S2DS_seed222/test_metrics.json

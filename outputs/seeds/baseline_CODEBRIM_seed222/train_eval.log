@@ -1,0 +1,14 @@
+[2026-10-21 21:03:29] === Starting Experiment: variant=baseline | train_ds=Bridge512_balance_CODEBRIM | device=cuda:0 ===
+[2026-10-21 21:03:40] Trainable parameters (baseline): 31,522,836
+[2026-10-21 21:09:24] Epoch [1/8] loss=4.3352 | Val I-AUROC=89.48 P-AUROC=90.21 P-F1=41.80 P-AP=40.67
+[2026-10-21 21:15:07] Epoch [2/8] loss=3.9811 | Val I-AUROC=91.78 P-AUROC=94.51 P-F1=54.60 P-AP=57.55
+[2026-10-21 21:20:51] Epoch [3/8] loss=3.8891 | Val I-AUROC=91.74 P-AUROC=95.51 P-F1=56.62 P-AP=62.51
+[2026-10-21 21:26:44] Epoch [4/8] loss=3.8131 | Val I-AUROC=93.13 P-AUROC=95.76 P-F1=58.80 P-AP=64.71
+[2026-10-21 21:32:28] Epoch [5/8] loss=3.7464 | Val I-AUROC=92.47 P-AUROC=96.55 P-F1=65.07 P-AP=71.39
+[2026-10-21 21:38:10] Epoch [6/8] loss=3.6884 | Val I-AUROC=92.82 P-AUROC=95.80 P-F1=62.20 P-AP=68.54
+[2026-10-21 21:43:54] Epoch [7/8] loss=3.6480 | Val I-AUROC=92.09 P-AUROC=96.83 P-F1=63.88 P-AP=72.40
+[2026-10-21 21:49:37] Epoch [8/8] loss=3.6196 | Val I-AUROC=92.88 P-AUROC=96.79 P-F1=64.69 P-AP=72.38
+[2026-10-21 21:49:37] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/seeds/baseline_CODEBRIM_seed222/best_model.pth for final Test evaluation...
+[2026-10-21 21:51:00] [In-Domain Test: Bridge512_balance_CODEBRIM] {"Image-AUROC": 92.97, "Image-F1": 78.47, "Image-AP": 87.03, "Pixel-AUROC": 95.49, "Pixel-F1": 65.23, "Pixel-AP": 72.7, "Pixel-AUPRO": 74.21, "Pixel-IoU": 48.4, "Mean-Score": 80.87, "Best-Th": 0.27, "Per-Class": {"Crack_Recall": 53.84, "Spalling_Recall": 74.16, "Corrosion_Recall": 94.47, "Efflorescence_Recall": 55.61}}
+[2026-10-21 21:51:29] [Cross-Domain Zero-Shot Test: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 87.06, "Image-F1": 92.29, "Image-AP": 97.13, "Pixel-AUROC": 97.01, "Pixel-F1": 74.42, "Pixel-AP": 77.67, "Pixel-AUPRO": 49.87, "Pixel-IoU": 59.26, "Mean-Score": 82.21, "Best-Th": 0.38, "Per-Class": {"Crack_Recall": 53.02, "Spalling_Recall": 85.15, "Corrosion_Recall": 72.87, "Efflorescence_Recall": 66.29}}
+[2026-10-21 21:51:29] Saved complete results to /home/skye/data/Skye/visualad/outputs/seeds/baseline_CODEBRIM_seed222/test_metrics.json
