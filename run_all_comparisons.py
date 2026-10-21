@@ -30,25 +30,6 @@ def unify_mean_metrics(m_dict):
 
 
 def aggregate_comparison_metrics():
-    clean_ab_path = os.path.join(OUT_DIR, "ablation_metrics_clean_single_model.json")
-    a4_code_path = os.path.join(OUT_DIR, "a4_scratch8ep_CODEBRIM", "test_metrics.json")
-    if os.path.exists(clean_ab_path) and os.path.exists(a4_code_path):
-        with open(clean_ab_path, "r", encoding="utf-8") as f:
-            ab = json.load(f)
-        with open(a4_code_path, "r", encoding="utf-8") as f:
-            m_code = json.load(f)
-        if "A4_Scratch8Ep_Ep8" in ab.get("CODEBRIM_in_domain", {}):
-            in_ep8 = dict(ab["CODEBRIM_in_domain"]["A4_Scratch8Ep_Ep8"])
-            in_ep8.pop("Variant-Name", None)
-            in_ep8.pop("Trainable-Params", None)
-            cr_ep8 = dict(ab["CODEBRIM_to_S2DS_cross_domain"]["A4_Scratch8Ep_Ep8"])
-            cr_ep8.pop("Variant-Name", None)
-            cr_ep8.pop("Trainable-Params", None)
-            m_code["in_domain_test"] = unify_mean_metrics(in_ep8)
-            m_code["cross_domain_test"] = unify_mean_metrics(cr_ep8)
-            with open(a4_code_path, "w", encoding="utf-8") as f:
-                json.dump(m_code, f, indent=2)
-
     protocol_map = {
         "Dinomaly": "10k iters (val-best)",
         "AnomalyCLIP": "15 Ep (val-best)",

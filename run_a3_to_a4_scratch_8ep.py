@@ -507,7 +507,7 @@ def train_scratch_8ep_factorial_variant(
         )
         history.append({"epoch": epoch + 1, "train_loss": round(mean_train_loss, 4), "val": val_metrics})
 
-        if val_key_score >= best_val_score:
+        if (epoch + 1) > (epochs // 2) and val_key_score >= best_val_score:
             best_val_score = val_key_score
             best_epoch = epoch + 1
             torch.save(wrapper.get_trainable_state_dict(), best_ckpt_path)

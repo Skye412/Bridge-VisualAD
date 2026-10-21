@@ -232,5 +232,8 @@
         "Mean-5": 66.47
       }
     }
-  ]
+  ],
+  "selected_val_epoch": 8,
+  "best_ckpt_sha256": "86516032e4b218ab4e8a585a714b0114b8ad9b094538bcbe18de9f75a10a1045",
+  "val_best_th": 0.43
 }

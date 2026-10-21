@@ -362,7 +362,7 @@ def infer_adaptclip_on_dacl(short_ds, device):
     ckpt_dir = os.path.join(CUR_DIR, "outputs", f"comp_adaptclip_{short_ds}")
     with open(os.path.join(ckpt_dir, "test_metrics.json"), "r", encoding="utf-8") as f:
         src_meta = json.load(f)
-    source_th = float(src_meta["in_domain_test"].get("Best-Th", 0.35))
+    source_th = float(src_meta.get("val_best_th", src_meta["in_domain_test"].get("Best-Th", 0.35)))
 
     model, _ = adaptcliplib.load(
         "ViT-L/14@336px",
@@ -452,7 +452,7 @@ def infer_wpformer_on_dacl(short_ds, device):
     ckpt_dir = os.path.join(CUR_DIR, "outputs", f"comp_wpformer_{short_ds}")
     with open(os.path.join(ckpt_dir, "test_metrics.json"), "r", encoding="utf-8") as f:
         src_meta = json.load(f)
-    source_th = float(src_meta["in_domain_test"].get("Best-Th", 0.35))
+    source_th = float(src_meta.get("val_best_th", src_meta["in_domain_test"].get("Best-Th", 0.35)))
 
     model.load_state_dict(torch.load(os.path.join(ckpt_dir, "best_model.pth"), map_location=device))
     model.eval()

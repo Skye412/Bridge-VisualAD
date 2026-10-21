@@ -420,6 +420,7 @@ def evaluate_model(wrapper: BridgeVisualADWrapper, dataloader, device, sigma: fl
         "Pixel-AUPRO": round(p_aupro, 2),
         "Pixel-IoU": round(p_iou, 2),
         "Mean-Score": round((i_auroc + i_f1 + i_ap + p_auroc + p_f1 + p_ap + p_aupro) / 7.0, 2),
+        "Best-Th": round(best_th, 4),
         "Per-Class": class_metrics,
     }
     return metrics
@@ -581,7 +582,7 @@ def run_single_experiment(args):
         )
         history.append({"epoch": epoch + 1, "train_loss": round(mean_train_loss, 4), "val": val_metrics})
 
-        if val_key_score >= best_val_score:
+        if (epoch + 1) > (args.epochs // 2) and val_key_score >= best_val_score:
             best_val_score = val_key_score
             torch.save(wrapper.get_trainable_state_dict(), best_ckpt_path)
 

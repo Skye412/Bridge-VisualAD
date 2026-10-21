@@ -219,10 +219,11 @@ def fast_aupro(masks, amaps, num_th=40, max_fpr=0.3):
     order = np.argsort(fprs)
     fprs = fprs[order]
     pros = pros[order]
-    fpr_span = float(fprs[-1] - fprs[0])
+    fpr_span = float(fprs.max() - fprs.min())
     if fpr_span <= 1e-12:
-        return 0.0
-    return float(auc(fprs, pros) / fpr_span)
+        return float(pros.mean())
+    fpr_norm = (fprs - fprs.min()) / fpr_span
+    return float(auc(fpr_norm, pros))
 
 
 def eval_metrics_from_amap_and_sp(gt_sp, final_sp, masks_np, amaps_norm, class_masks_dict, compute_pro=True):

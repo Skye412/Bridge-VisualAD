@@ -172,10 +172,19 @@ def fast_aupro_precomputed(masks, amaps, cc_list, ignore_masks=None, num_th=40, 
     fpr_span = float(fprs[-1] - fprs[0])
     aupro_repo = float(auc(fprs, pros) / fpr_span) if fpr_span > 1e-12 else 0.0
 
-    # Also compute standard [0, max_fpr] integrated AUPRO with boundary interpolation at 0 and max_fpr
+    # Standard [0, max_fpr] integrated AUPRO with linear boundary interpolation at max_fpr (0.3)
+    order_all = np.argsort(fpr_arr)
+    f_all = fpr_arr[order_all]
+    p_all = mean_pros[order_all]
+    if fprs[-1] < max_fpr and f_all[-1] > max_fpr:
+        p_at_03 = float(np.interp(max_fpr, f_all, p_all))
+    else:
+        p_at_03 = float(pros[-1])
     fprs_ext = np.concatenate([[0.0], fprs, [max_fpr]])
-    pros_ext = np.concatenate([[0.0], pros, [pros[-1]]])
+    pros_ext = np.concatenate([[0.0], pros, [p_at_03]])
     aupro_std03 = float(auc(fprs_ext, pros_ext) / max_fpr)
+    if fpr_span <= 1e-12:
+        aupro_repo = float(pros.mean())
     return aupro_repo, aupro_std03
 
 
@@ -372,7 +381,7 @@ def infer_amaps_and_scores(model_key, short_ds, dataloader, device):
     metrics_path = os.path.join(ckpt_dir, "test_metrics.json")
     with open(metrics_path, "r", encoding="utf-8") as f:
         src_meta = json.load(f)
-    source_th = float(src_meta["in_domain_test"].get("Best-Th", 0.35))
+    source_th = float(src_meta.get("val_best_th", src_meta["in_domain_test"].get("Best-Th", 0.35)))
 
     state = torch.load(ckpt_path, map_location=device)
 

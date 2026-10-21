@@ -21,7 +21,8 @@
       "Corrosion_Recall": 84.31,
       "Efflorescence_Recall": 57.68
     },
-    "Mean-5": 88.11
+    "Mean-5": 88.11,
+    "Best-Th": 0.46
   },
   "cross_domain_test_dataset": "Bridge512_balance_CODEBRIM",
   "cross_domain_test": {
@@ -168,8 +169,12 @@
         "Pixel-AUPRO": 0.0,
         "Pixel-IoU": 77.81,
         "Mean-Score": 81.7,
-        "Per-Class": {}
+        "Per-Class": {},
+        "Best-Th": 0.43
       }
     }
-  ]
+  ],
+  "selected_val_epoch": 8,
+  "best_ckpt_sha256": "373bd9e09edfb65c3e9ac42c13d993637594f097a4f441cbeee84b7be054e726",
+  "val_best_th": 0.43
 }

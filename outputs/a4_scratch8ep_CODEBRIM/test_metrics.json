@@ -181,5 +181,8 @@
         "Per-Class": {}
       }
     }
-  ]
+  ],
+  "selected_val_epoch": 8,
+  "best_ckpt_sha256": "2f8d16f83a05417f6fc84a5b9ce9df41e470c914a6d637a0be5186430fd8f526",
+  "val_best_th": 0.42
 }

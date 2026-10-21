@@ -17,6 +17,7 @@
         "Efflorescence_Recall": 57.68
       },
       "Mean-5": 88.11,
+      "Best-Th": 0.46,
       "Variant-Name": "A0 (Baseline: VisualAD)",
       "Protocol": "8 Ep (Scratch, val-best)",
       "Trainable-Params": 31522836
@@ -216,6 +217,7 @@
         "Efflorescence_Recall": 57.06
       },
       "Mean-5": 79.52,
+      "Best-Th": 0.3,
       "Variant-Name": "A0 (Baseline: VisualAD)",
       "Protocol": "8 Ep (Scratch, val-best)",
       "Trainable-Params": 31522836
