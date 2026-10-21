@@ -1149,6 +1149,290 @@
           "Image-F1": 96.77
         }
       }
+    },
+    "comp_adaptclip": {
+      "model_key": "comp_adaptclip",
+      "label": "AdaptCLIP (AAAI 2026)",
+      "source_dataset": "S2DS",
+      "source_fixed_th": 0.46,
+      "elapsed_sec": 163.1,
+      "all_13_damages": {
+        "Pixel-AUROC": 65.75,
+        "Pixel-AP": 42.25,
+        "Pixel-AUPRO": 38.05,
+        "Pixel-AUPRO-Std03": 42.29,
+        "Pixel-F1": 42.52,
+        "Pixel-IoU": 27.0,
+        "Pixel-Mean-4": 47.15,
+        "Best-Th": 0.03,
+        "Source-Fixed-Th": 0.46,
+        "Pixel-F1-at-Source-Th": 20.59,
+        "Pixel-IoU-at-Source-Th": 11.48,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 82.95,
+          "Spalling_Recall": 95.04,
+          "Corrosion_Recall": 92.35,
+          "Efflorescence_Recall": 79.57,
+          "Crack_plus_ACrack_Recall": 52.69,
+          "Shared4_Macro_Recall": 87.48
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 18.32,
+          "Spalling_Recall": 49.72,
+          "Corrosion_Recall": 45.61,
+          "Efflorescence_Recall": 15.84,
+          "Shared4_Macro_Recall": 32.37
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 43.9,
+          "ExposedRebars_Recall": 99.97,
+          "Cavity_Recall": 40.66,
+          "Wetspot_Recall": 69.23,
+          "Weathering_Recall": 58.43,
+          "Hollowareas_Recall": 78.47,
+          "Rockpocket_Recall": 90.59,
+          "WConccor_Recall": 91.65
+        },
+        "Image-Reference": {
+          "Positive-Images": 914,
+          "Negative-Images": 61,
+          "Image-AUROC": 71.55,
+          "Image-AP": 97.35,
+          "Image-F1": 96.77
+        }
+      },
+      "structural_12_damages": {
+        "Pixel-AUROC": 65.78,
+        "Pixel-AP": 40.55,
+        "Pixel-AUPRO": 39.65,
+        "Pixel-AUPRO-Std03": 43.72,
+        "Pixel-F1": 39.78,
+        "Pixel-IoU": 24.83,
+        "Pixel-Mean-4": 46.44,
+        "Best-Th": 0.05,
+        "Source-Fixed-Th": 0.46,
+        "Pixel-F1-at-Source-Th": 22.12,
+        "Pixel-IoU-at-Source-Th": 12.43,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 76.13,
+          "Spalling_Recall": 90.91,
+          "Corrosion_Recall": 87.21,
+          "Efflorescence_Recall": 68.31,
+          "Crack_plus_ACrack_Recall": 41.34,
+          "Shared4_Macro_Recall": 80.64
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 18.32,
+          "Spalling_Recall": 49.72,
+          "Corrosion_Recall": 45.61,
+          "Efflorescence_Recall": 15.84,
+          "Shared4_Macro_Recall": 32.37
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 31.24,
+          "ExposedRebars_Recall": 99.89,
+          "Cavity_Recall": 28.51,
+          "Wetspot_Recall": 56.08,
+          "Weathering_Recall": 44.48,
+          "Hollowareas_Recall": 64.78,
+          "Rockpocket_Recall": 83.72,
+          "WConccor_Recall": 84.19
+        },
+        "Image-Reference": {
+          "Positive-Images": 877,
+          "Negative-Images": 98,
+          "Image-AUROC": 73.54,
+          "Image-AP": 96.22,
+          "Image-F1": 94.71
+        }
+      },
+      "shared_4_ignore_other": {
+        "Pixel-AUROC": 84.68,
+        "Pixel-AP": 49.55,
+        "Pixel-AUPRO": 53.08,
+        "Pixel-AUPRO-Std03": 57.57,
+        "Pixel-F1": 48.33,
+        "Pixel-IoU": 31.87,
+        "Pixel-Mean-4": 58.91,
+        "Best-Th": 0.33,
+        "Source-Fixed-Th": 0.46,
+        "Pixel-F1-at-Source-Th": 45.88,
+        "Pixel-IoU-at-Source-Th": 29.77,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 30.28,
+          "Spalling_Recall": 60.8,
+          "Corrosion_Recall": 56.12,
+          "Efflorescence_Recall": 23.39,
+          "Crack_plus_ACrack_Recall": 9.02,
+          "Shared4_Macro_Recall": 42.65
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 18.32,
+          "Spalling_Recall": 49.72,
+          "Corrosion_Recall": 45.61,
+          "Efflorescence_Recall": 15.84,
+          "Shared4_Macro_Recall": 32.37
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 2.85,
+          "ExposedRebars_Recall": 95.18,
+          "Cavity_Recall": 3.25,
+          "Wetspot_Recall": 9.58,
+          "Weathering_Recall": 7.27,
+          "Hollowareas_Recall": 21.39,
+          "Rockpocket_Recall": 45.82,
+          "WConccor_Recall": 35.6
+        },
+        "Image-Reference": {
+          "Positive-Images": 778,
+          "Negative-Images": 197,
+          "Image-AUROC": 73.38,
+          "Image-AP": 91.59,
+          "Image-F1": 88.99
+        }
+      }
+    },
+    "comp_wpformer": {
+      "model_key": "comp_wpformer",
+      "label": "WPFormer (CVPR 2025)",
+      "source_dataset": "S2DS",
+      "source_fixed_th": 0.49,
+      "elapsed_sec": 117.3,
+      "all_13_damages": {
+        "Pixel-AUROC": 55.76,
+        "Pixel-AP": 29.51,
+        "Pixel-AUPRO": 14.48,
+        "Pixel-AUPRO-Std03": 19.17,
+        "Pixel-F1": 21.18,
+        "Pixel-IoU": 11.85,
+        "Pixel-Mean-4": 30.23,
+        "Best-Th": 0.01,
+        "Source-Fixed-Th": 0.49,
+        "Pixel-F1-at-Source-Th": 17.25,
+        "Pixel-IoU-at-Source-Th": 9.44,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 21.85,
+          "Spalling_Recall": 47.58,
+          "Corrosion_Recall": 48.29,
+          "Efflorescence_Recall": 13.33,
+          "Crack_plus_ACrack_Recall": 7.39,
+          "Shared4_Macro_Recall": 32.76
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 7.61,
+          "Spalling_Recall": 41.75,
+          "Corrosion_Recall": 41.49,
+          "Efflorescence_Recall": 9.9,
+          "Shared4_Macro_Recall": 25.19
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 3.2,
+          "ExposedRebars_Recall": 85.77,
+          "Cavity_Recall": 1.66,
+          "Wetspot_Recall": 7.2,
+          "Weathering_Recall": 4.88,
+          "Hollowareas_Recall": 14.3,
+          "Rockpocket_Recall": 25.35,
+          "WConccor_Recall": 23.13
+        },
+        "Image-Reference": {
+          "Positive-Images": 914,
+          "Negative-Images": 61,
+          "Image-AUROC": 66.18,
+          "Image-AP": 96.38,
+          "Image-F1": 96.77
+        }
+      },
+      "structural_12_damages": {
+        "Pixel-AUROC": 55.98,
+        "Pixel-AP": 27.42,
+        "Pixel-AUPRO": 14.78,
+        "Pixel-AUPRO-Std03": 19.26,
+        "Pixel-F1": 21.92,
+        "Pixel-IoU": 12.31,
+        "Pixel-Mean-4": 30.02,
+        "Best-Th": 0.01,
+        "Source-Fixed-Th": 0.49,
+        "Pixel-F1-at-Source-Th": 18.31,
+        "Pixel-IoU-at-Source-Th": 10.08,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 21.85,
+          "Spalling_Recall": 47.58,
+          "Corrosion_Recall": 48.29,
+          "Efflorescence_Recall": 13.33,
+          "Crack_plus_ACrack_Recall": 7.39,
+          "Shared4_Macro_Recall": 32.76
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 7.61,
+          "Spalling_Recall": 41.75,
+          "Corrosion_Recall": 41.49,
+          "Efflorescence_Recall": 9.9,
+          "Shared4_Macro_Recall": 25.19
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 3.2,
+          "ExposedRebars_Recall": 85.77,
+          "Cavity_Recall": 1.66,
+          "Wetspot_Recall": 7.2,
+          "Weathering_Recall": 4.88,
+          "Hollowareas_Recall": 14.3,
+          "Rockpocket_Recall": 25.35,
+          "WConccor_Recall": 23.13
+        },
+        "Image-Reference": {
+          "Positive-Images": 877,
+          "Negative-Images": 98,
+          "Image-AUROC": 65.15,
+          "Image-AP": 93.78,
+          "Image-F1": 94.71
+        }
+      },
+      "shared_4_ignore_other": {
+        "Pixel-AUROC": 68.01,
+        "Pixel-AP": 27.47,
+        "Pixel-AUPRO": 21.16,
+        "Pixel-AUPRO-Std03": 27.33,
+        "Pixel-F1": 42.39,
+        "Pixel-IoU": 26.9,
+        "Pixel-Mean-4": 39.76,
+        "Best-Th": 0.01,
+        "Source-Fixed-Th": 0.49,
+        "Pixel-F1-at-Source-Th": 39.02,
+        "Pixel-IoU-at-Source-Th": 24.24,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 21.85,
+          "Spalling_Recall": 47.58,
+          "Corrosion_Recall": 48.29,
+          "Efflorescence_Recall": 13.33,
+          "Crack_plus_ACrack_Recall": 7.39,
+          "Shared4_Macro_Recall": 32.76
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 7.61,
+          "Spalling_Recall": 41.75,
+          "Corrosion_Recall": 41.49,
+          "Efflorescence_Recall": 9.9,
+          "Shared4_Macro_Recall": 25.19
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 3.2,
+          "ExposedRebars_Recall": 85.77,
+          "Cavity_Recall": 1.66,
+          "Wetspot_Recall": 7.2,
+          "Weathering_Recall": 4.88,
+          "Hollowareas_Recall": 14.3,
+          "Rockpocket_Recall": 25.35,
+          "WConccor_Recall": 23.13
+        },
+        "Image-Reference": {
+          "Positive-Images": 778,
+          "Negative-Images": 197,
+          "Image-AUROC": 62.84,
+          "Image-AP": 85.84,
+          "Image-F1": 88.81
+        }
+      }
     }
   },
   "CODEBRIM_to_DACL10k": {
@@ -2233,6 +2517,290 @@
           "Image-AUROC": 70.46,
           "Image-AP": 97.01,
           "Image-F1": 96.77
+        }
+      }
+    },
+    "comp_adaptclip": {
+      "model_key": "comp_adaptclip",
+      "label": "AdaptCLIP (AAAI 2026)",
+      "source_dataset": "CODEBRIM",
+      "source_fixed_th": 0.31,
+      "elapsed_sec": 159.7,
+      "all_13_damages": {
+        "Pixel-AUROC": 68.41,
+        "Pixel-AP": 43.81,
+        "Pixel-AUPRO": 30.18,
+        "Pixel-AUPRO-Std03": 33.21,
+        "Pixel-F1": 45.36,
+        "Pixel-IoU": 29.34,
+        "Pixel-Mean-4": 46.94,
+        "Best-Th": 0.13,
+        "Source-Fixed-Th": 0.31,
+        "Pixel-F1-at-Source-Th": 37.43,
+        "Pixel-IoU-at-Source-Th": 23.02,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 76.81,
+          "Spalling_Recall": 90.03,
+          "Corrosion_Recall": 79.62,
+          "Efflorescence_Recall": 81.76,
+          "Crack_plus_ACrack_Recall": 53.71,
+          "Shared4_Macro_Recall": 82.06
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 46.28,
+          "Spalling_Recall": 70.46,
+          "Corrosion_Recall": 55.34,
+          "Efflorescence_Recall": 51.1,
+          "Shared4_Macro_Recall": 55.79
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 47.01,
+          "ExposedRebars_Recall": 99.16,
+          "Cavity_Recall": 25.1,
+          "Wetspot_Recall": 67.8,
+          "Weathering_Recall": 54.28,
+          "Hollowareas_Recall": 74.99,
+          "Rockpocket_Recall": 77.46,
+          "WConccor_Recall": 82.36
+        },
+        "Image-Reference": {
+          "Positive-Images": 914,
+          "Negative-Images": 61,
+          "Image-AUROC": 66.14,
+          "Image-AP": 96.68,
+          "Image-F1": 96.77
+        }
+      },
+      "structural_12_damages": {
+        "Pixel-AUROC": 68.41,
+        "Pixel-AP": 42.14,
+        "Pixel-AUPRO": 31.14,
+        "Pixel-AUPRO-Std03": 33.73,
+        "Pixel-F1": 42.74,
+        "Pixel-IoU": 27.18,
+        "Pixel-Mean-4": 46.11,
+        "Best-Th": 0.17,
+        "Source-Fixed-Th": 0.31,
+        "Pixel-F1-at-Source-Th": 38.54,
+        "Pixel-IoU-at-Source-Th": 23.87,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 70.07,
+          "Spalling_Recall": 86.03,
+          "Corrosion_Recall": 73.72,
+          "Efflorescence_Recall": 74.87,
+          "Crack_plus_ACrack_Recall": 45.14,
+          "Shared4_Macro_Recall": 76.17
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 46.28,
+          "Spalling_Recall": 70.46,
+          "Corrosion_Recall": 55.34,
+          "Efflorescence_Recall": 51.1,
+          "Shared4_Macro_Recall": 55.79
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 37.91,
+          "ExposedRebars_Recall": 98.66,
+          "Cavity_Recall": 18.92,
+          "Wetspot_Recall": 58.94,
+          "Weathering_Recall": 45.36,
+          "Hollowareas_Recall": 64.93,
+          "Rockpocket_Recall": 70.11,
+          "WConccor_Recall": 75.04
+        },
+        "Image-Reference": {
+          "Positive-Images": 877,
+          "Negative-Images": 98,
+          "Image-AUROC": 66.2,
+          "Image-AP": 94.76,
+          "Image-F1": 94.71
+        }
+      },
+      "shared_4_ignore_other": {
+        "Pixel-AUROC": 83.25,
+        "Pixel-AP": 43.3,
+        "Pixel-AUPRO": 42.27,
+        "Pixel-AUPRO-Std03": 45.92,
+        "Pixel-F1": 42.55,
+        "Pixel-IoU": 27.02,
+        "Pixel-Mean-4": 52.84,
+        "Best-Th": 0.42,
+        "Source-Fixed-Th": 0.31,
+        "Pixel-F1-at-Source-Th": 40.55,
+        "Pixel-IoU-at-Source-Th": 25.43,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 30.09,
+          "Spalling_Recall": 57.73,
+          "Corrosion_Recall": 43.06,
+          "Efflorescence_Recall": 34.21,
+          "Crack_plus_ACrack_Recall": 12.71,
+          "Shared4_Macro_Recall": 41.27
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 46.28,
+          "Spalling_Recall": 70.46,
+          "Corrosion_Recall": 55.34,
+          "Efflorescence_Recall": 51.1,
+          "Shared4_Macro_Recall": 55.79
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 7.67,
+          "ExposedRebars_Recall": 81.99,
+          "Cavity_Recall": 5.0,
+          "Wetspot_Recall": 21.31,
+          "Weathering_Recall": 14.5,
+          "Hollowareas_Recall": 25.35,
+          "Rockpocket_Recall": 37.56,
+          "WConccor_Recall": 42.18
+        },
+        "Image-Reference": {
+          "Positive-Images": 778,
+          "Negative-Images": 197,
+          "Image-AUROC": 68.47,
+          "Image-AP": 89.36,
+          "Image-F1": 88.81
+        }
+      }
+    },
+    "comp_wpformer": {
+      "model_key": "comp_wpformer",
+      "label": "WPFormer (CVPR 2025)",
+      "source_dataset": "CODEBRIM",
+      "source_fixed_th": 0.01,
+      "elapsed_sec": 111.4,
+      "all_13_damages": {
+        "Pixel-AUROC": 52.88,
+        "Pixel-AP": 27.31,
+        "Pixel-AUPRO": 8.29,
+        "Pixel-AUPRO-Std03": 12.58,
+        "Pixel-F1": 10.58,
+        "Pixel-IoU": 5.58,
+        "Pixel-Mean-4": 24.76,
+        "Best-Th": 0.01,
+        "Source-Fixed-Th": 0.01,
+        "Pixel-F1-at-Source-Th": 10.58,
+        "Pixel-IoU-at-Source-Th": 5.58,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 20.59,
+          "Spalling_Recall": 24.04,
+          "Corrosion_Recall": 18.83,
+          "Efflorescence_Recall": 6.53,
+          "Crack_plus_ACrack_Recall": 6.5,
+          "Shared4_Macro_Recall": 17.5
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 20.59,
+          "Spalling_Recall": 24.04,
+          "Corrosion_Recall": 18.83,
+          "Efflorescence_Recall": 6.53,
+          "Shared4_Macro_Recall": 17.5
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 2.41,
+          "ExposedRebars_Recall": 39.26,
+          "Cavity_Recall": 0.32,
+          "Wetspot_Recall": 4.23,
+          "Weathering_Recall": 2.48,
+          "Hollowareas_Recall": 6.98,
+          "Rockpocket_Recall": 4.33,
+          "WConccor_Recall": 8.23
+        },
+        "Image-Reference": {
+          "Positive-Images": 914,
+          "Negative-Images": 61,
+          "Image-AUROC": 63.44,
+          "Image-AP": 95.81,
+          "Image-F1": 96.77
+        }
+      },
+      "structural_12_damages": {
+        "Pixel-AUROC": 53.17,
+        "Pixel-AP": 25.31,
+        "Pixel-AUPRO": 8.62,
+        "Pixel-AUPRO-Std03": 13.01,
+        "Pixel-F1": 11.42,
+        "Pixel-IoU": 6.05,
+        "Pixel-Mean-4": 24.63,
+        "Best-Th": 0.01,
+        "Source-Fixed-Th": 0.01,
+        "Pixel-F1-at-Source-Th": 11.42,
+        "Pixel-IoU-at-Source-Th": 6.05,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 20.59,
+          "Spalling_Recall": 24.04,
+          "Corrosion_Recall": 18.83,
+          "Efflorescence_Recall": 6.53,
+          "Crack_plus_ACrack_Recall": 6.5,
+          "Shared4_Macro_Recall": 17.5
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 20.59,
+          "Spalling_Recall": 24.04,
+          "Corrosion_Recall": 18.83,
+          "Efflorescence_Recall": 6.53,
+          "Shared4_Macro_Recall": 17.5
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 2.41,
+          "ExposedRebars_Recall": 39.26,
+          "Cavity_Recall": 0.32,
+          "Wetspot_Recall": 4.23,
+          "Weathering_Recall": 2.48,
+          "Hollowareas_Recall": 6.98,
+          "Rockpocket_Recall": 4.33,
+          "WConccor_Recall": 8.23
+        },
+        "Image-Reference": {
+          "Positive-Images": 877,
+          "Negative-Images": 98,
+          "Image-AUROC": 60.89,
+          "Image-AP": 93.1,
+          "Image-F1": 94.71
+        }
+      },
+      "shared_4_ignore_other": {
+        "Pixel-AUROC": 59.26,
+        "Pixel-AP": 20.06,
+        "Pixel-AUPRO": 11.57,
+        "Pixel-AUPRO-Std03": 17.4,
+        "Pixel-F1": 25.57,
+        "Pixel-IoU": 14.66,
+        "Pixel-Mean-4": 29.11,
+        "Best-Th": 0.01,
+        "Source-Fixed-Th": 0.01,
+        "Pixel-F1-at-Source-Th": 25.57,
+        "Pixel-IoU-at-Source-Th": 14.66,
+        "Per-Class-Shared4": {
+          "Crack_Recall": 20.59,
+          "Spalling_Recall": 24.04,
+          "Corrosion_Recall": 18.83,
+          "Efflorescence_Recall": 6.53,
+          "Crack_plus_ACrack_Recall": 6.5,
+          "Shared4_Macro_Recall": 17.5
+        },
+        "Per-Class-Shared4-at-Source-Th": {
+          "Crack_Recall": 20.59,
+          "Spalling_Recall": 24.04,
+          "Corrosion_Recall": 18.83,
+          "Efflorescence_Recall": 6.53,
+          "Shared4_Macro_Recall": 17.5
+        },
+        "Per-Class-Extended": {
+          "ACrack_Recall": 2.41,
+          "ExposedRebars_Recall": 39.26,
+          "Cavity_Recall": 0.32,
+          "Wetspot_Recall": 4.23,
+          "Weathering_Recall": 2.48,
+          "Hollowareas_Recall": 6.98,
+          "Rockpocket_Recall": 4.33,
+          "WConccor_Recall": 8.23
+        },
+        "Image-Reference": {
+          "Positive-Images": 778,
+          "Negative-Images": 197,
+          "Image-AUROC": 63.22,
+          "Image-AP": 86.54,
+          "Image-F1": 88.76
         }
       }
     }
