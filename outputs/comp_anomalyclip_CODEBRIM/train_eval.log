@@ -1,0 +1,20 @@
+[2026-10-20 10:40:42] === AnomalyCLIP (Bridge512_balance_CODEBRIM, Official 15 Ep) | Trainable params: 5555200 ===
+[2026-10-20 10:50:50] Epoch [1/15] loss=18.9858 | Val I-AUROC=75.05 P-AUROC=86.30 P-F1=34.76 P-AP=25.58
+[2026-10-20 10:53:11] Epoch [2/15] loss=18.2979 | Val I-AUROC=78.02 P-AUROC=86.57 P-F1=35.42 P-AP=26.32
+[2026-10-20 10:55:44] Epoch [3/15] loss=18.1571 | Val I-AUROC=78.62 P-AUROC=87.37 P-F1=36.39 P-AP=27.51
+[2026-10-20 10:58:22] Epoch [4/15] loss=18.0887 | Val I-AUROC=82.36 P-AUROC=87.84 P-F1=37.72 P-AP=29.48
+[2026-10-20 11:00:52] Epoch [5/15] loss=18.0660 | Val I-AUROC=79.53 P-AUROC=87.86 P-F1=37.29 P-AP=29.32
+[2026-10-20 11:03:25] Epoch [6/15] loss=18.0304 | Val I-AUROC=79.52 P-AUROC=89.29 P-F1=39.31 P-AP=30.01
+[2026-10-20 11:05:58] Epoch [7/15] loss=17.9850 | Val I-AUROC=78.84 P-AUROC=86.97 P-F1=35.88 P-AP=27.42
+[2026-10-20 11:08:25] Epoch [8/15] loss=17.9840 | Val I-AUROC=79.30 P-AUROC=88.90 P-F1=39.09 P-AP=30.83
+[2026-10-20 11:11:02] Epoch [9/15] loss=17.9958 | Val I-AUROC=79.71 P-AUROC=88.10 P-F1=37.53 P-AP=28.18
+[2026-10-20 11:13:30] Epoch [10/15] loss=17.9647 | Val I-AUROC=79.82 P-AUROC=88.22 P-F1=37.91 P-AP=29.33
+[2026-10-20 11:15:58] Epoch [11/15] loss=17.9621 | Val I-AUROC=79.36 P-AUROC=87.28 P-F1=36.72 P-AP=29.02
+[2026-10-20 11:18:24] Epoch [12/15] loss=17.9474 | Val I-AUROC=78.62 P-AUROC=89.12 P-F1=38.99 P-AP=30.81
+[2026-10-20 11:20:59] Epoch [13/15] loss=17.9389 | Val I-AUROC=80.09 P-AUROC=89.68 P-F1=40.09 P-AP=30.67
+[2026-10-20 11:23:23] Epoch [14/15] loss=17.9287 | Val I-AUROC=78.93 P-AUROC=88.48 P-F1=37.74 P-AP=29.30
+[2026-10-20 11:25:45] Epoch [15/15] loss=17.9232 | Val I-AUROC=78.77 P-AUROC=87.61 P-F1=37.18 P-AP=29.27
+[2026-10-20 11:28:18] [AnomalyCLIP (8Ep) In-Domain Bridge512_balance_CODEBRIM] {"Image-AUROC": 81.66, "Image-F1": 66.1, "Image-AP": 67.45, "Pixel-AUROC": 91.89, "Pixel-F1": 54.51, "Pixel-AP": 56.58, "Pixel-AUPRO": 63.9, "Pixel-IoU": 37.47, "Mean-Score": 69.71, "Best-Th": 0.31, "Per-Class": {"Crack_Recall": 77.06, "Spalling_Recall": 81.16, "Corrosion_Recall": 97.17, "Efflorescence_Recall": 36.46}}
+[2026-10-20 11:28:18] [AnomalyCLIP (8Ep) Cross-Domain Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 69.78, "Image-F1": 91.11, "Image-AP": 91.94, "Pixel-AUROC": 91.24, "Pixel-F1": 55.14, "Pixel-AP": 51.72, "Pixel-AUPRO": 32.52, "Pixel-IoU": 38.06, "Mean-Score": 60.08, "Best-Th": 0.34, "Per-Class": {"Crack_Recall": 53.76, "Spalling_Recall": 69.03, "Corrosion_Recall": 78.23, "Efflorescence_Recall": 83.41}}
+[2026-10-20 11:29:51] [AnomalyCLIP (Official 15Ep) In-Domain Bridge512_balance_CODEBRIM] {"Image-AUROC": 82.28, "Image-F1": 66.33, "Image-AP": 68.88, "Pixel-AUROC": 91.98, "Pixel-F1": 54.92, "Pixel-AP": 56.98, "Pixel-AUPRO": 66.44, "Pixel-IoU": 37.85, "Mean-Score": 70.52, "Best-Th": 0.41, "Per-Class": {"Crack_Recall": 78.56, "Spalling_Recall": 81.3, "Corrosion_Recall": 97.27, "Efflorescence_Recall": 36.74}}
+[2026-10-20 11:30:45] [AnomalyCLIP (Official 15Ep) Cross-Domain Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 71.89, "Image-F1": 91.11, "Image-AP": 92.68, "Pixel-AUROC": 91.58, "Pixel-F1": 55.88, "Pixel-AP": 52.95, "Pixel-AUPRO": 35.57, "Pixel-IoU": 38.77, "Mean-Score": 61.57, "Best-Th": 0.45, "Per-Class": {"Crack_Recall": 56.02, "Spalling_Recall": 70.08, "Corrosion_Recall": 78.59, "Efflorescence_Recall": 81.59}}

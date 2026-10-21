@@ -1,0 +1,34 @@
+[2026-10-20 11:35:50] === Bayes-PFL (Bridge512_balance_S2DS, Official 30 Ep 2-Stage) | Trainable params: 27370017 ===
+[2026-10-20 11:44:27] Epoch [1/30] Stg1 loss=85.7010 | Val I-AUROC=75.10 P-AUROC=79.95 P-F1=50.72 P-AP=46.91
+[2026-10-20 11:47:50] Epoch [2/30] Stg1 loss=79.8617 | Val I-AUROC=89.26 P-AUROC=92.21 P-F1=67.85 P-AP=70.17
+[2026-10-20 11:50:50] Epoch [3/30] Stg1 loss=57.2054 | Val I-AUROC=82.83 P-AUROC=94.94 P-F1=73.11 P-AP=74.53
+[2026-10-20 11:53:50] Epoch [4/30] Stg1 loss=56.1789 | Val I-AUROC=86.29 P-AUROC=96.32 P-F1=77.56 P-AP=81.86
+[2026-10-20 11:56:49] Epoch [5/30] Stg1 loss=48.2413 | Val I-AUROC=89.23 P-AUROC=96.04 P-F1=76.68 P-AP=80.18
+[2026-10-20 11:59:48] Epoch [6/30] Stg1 loss=42.2453 | Val I-AUROC=87.79 P-AUROC=97.14 P-F1=80.48 P-AP=86.08
+[2026-10-20 12:02:47] Epoch [7/30] Stg1 loss=39.0827 | Val I-AUROC=89.03 P-AUROC=97.56 P-F1=83.78 P-AP=86.90
+[2026-10-20 12:05:49] Epoch [8/30] Stg1 loss=43.4988 | Val I-AUROC=87.30 P-AUROC=97.61 P-F1=82.40 P-AP=85.94
+[2026-10-20 12:08:48] Epoch [9/30] Stg1 loss=41.9560 | Val I-AUROC=83.50 P-AUROC=94.98 P-F1=75.12 P-AP=71.36
+[2026-10-20 12:11:48] Epoch [10/30] Stg1 loss=28.8710 | Val I-AUROC=89.18 P-AUROC=98.44 P-F1=87.36 P-AP=91.79
+[2026-10-20 12:14:48] Epoch [11/30] Stg1 loss=22.0882 | Val I-AUROC=90.89 P-AUROC=97.90 P-F1=84.08 P-AP=87.95
+[2026-10-20 12:17:43] Epoch [12/30] Stg1 loss=21.9913 | Val I-AUROC=89.50 P-AUROC=98.51 P-F1=87.09 P-AP=92.55
+[2026-10-20 12:20:42] Epoch [13/30] Stg1 loss=27.3299 | Val I-AUROC=88.41 P-AUROC=98.09 P-F1=85.14 P-AP=89.55
+[2026-10-20 12:23:39] Epoch [14/30] Stg1 loss=35.4403 | Val I-AUROC=88.66 P-AUROC=98.41 P-F1=87.68 P-AP=90.47
+[2026-10-20 12:26:34] Epoch [15/30] Stg1 loss=35.0343 | Val I-AUROC=90.17 P-AUROC=98.67 P-F1=89.18 P-AP=92.91
+[2026-10-20 12:29:33] Epoch [16/30] Stg1 loss=23.9819 | Val I-AUROC=90.76 P-AUROC=98.66 P-F1=88.02 P-AP=94.36
+[2026-10-20 12:32:31] Epoch [17/30] Stg1 loss=19.0197 | Val I-AUROC=91.06 P-AUROC=97.37 P-F1=81.72 P-AP=86.23
+[2026-10-20 12:35:23] Epoch [18/30] Stg1 loss=29.3766 | Val I-AUROC=90.76 P-AUROC=98.60 P-F1=88.22 P-AP=93.43
+[2026-10-20 12:38:19] Epoch [19/30] Stg1 loss=16.9863 | Val I-AUROC=89.16 P-AUROC=98.71 P-F1=88.64 P-AP=93.14
+[2026-10-20 12:38:19] --- Bayes-PFL: Switching from Stage 1 to Stage 2 ---
+[2026-10-20 12:41:07] Epoch [20/30] Stg2 loss=0.4585 | Val I-AUROC=90.88 P-AUROC=98.83 P-F1=89.29 P-AP=95.13
+[2026-10-20 12:43:56] Epoch [21/30] Stg2 loss=0.3457 | Val I-AUROC=93.40 P-AUROC=98.73 P-F1=88.52 P-AP=94.47
+[2026-10-20 12:46:46] Epoch [22/30] Stg2 loss=0.2526 | Val I-AUROC=94.41 P-AUROC=98.67 P-F1=87.80 P-AP=94.29
+[2026-10-20 12:49:38] Epoch [23/30] Stg2 loss=0.2004 | Val I-AUROC=96.10 P-AUROC=98.82 P-F1=89.14 P-AP=94.63
+[2026-10-20 12:52:30] Epoch [24/30] Stg2 loss=0.1772 | Val I-AUROC=94.79 P-AUROC=98.71 P-F1=88.37 P-AP=94.54
+[2026-10-20 12:55:17] Epoch [25/30] Stg2 loss=0.1388 | Val I-AUROC=95.56 P-AUROC=98.67 P-F1=88.29 P-AP=94.51
+[2026-10-20 12:58:03] Epoch [26/30] Stg2 loss=0.1157 | Val I-AUROC=95.06 P-AUROC=98.69 P-F1=88.34 P-AP=94.20
+[2026-10-20 12:58:03] --- Bayes-PFL: Stage 2 early stop at epoch 26 ---
+[2026-10-20 13:02:58] [Bayes-PFL (8Ep) In-Domain Bridge512_balance_S2DS] {"Image-AUROC": 84.85, "Image-F1": 91.38, "Image-AP": 96.47, "Pixel-AUROC": 96.37, "Pixel-F1": 74.18, "Pixel-AP": 75.52, "Pixel-AUPRO": 44.93, "Pixel-IoU": 58.96, "Mean-Score": 75.17, "Best-Th": 0.41, "Per-Class": {"Crack_Recall": 46.06, "Spalling_Recall": 85.06, "Corrosion_Recall": 84.46, "Efflorescence_Recall": 59.54}}
+[2026-10-20 13:02:58] [Bayes-PFL (8Ep) Cross-Domain Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 81.59, "Image-F1": 64.37, "Image-AP": 66.49, "Pixel-AUROC": 83.36, "Pixel-F1": 44.72, "Pixel-AP": 44.85, "Pixel-AUPRO": 51.73, "Pixel-IoU": 28.8, "Mean-Score": 61.25, "Best-Th": 0.47, "Per-Class": {"Crack_Recall": 43.43, "Spalling_Recall": 66.01, "Corrosion_Recall": 95.79, "Efflorescence_Recall": 3.58}}
+[2026-10-20 13:04:42] [Bayes-PFL (Official 30Ep) In-Domain Bridge512_balance_S2DS] {"Image-AUROC": 92.23, "Image-F1": 94.71, "Image-AP": 97.88, "Pixel-AUROC": 97.96, "Pixel-F1": 81.51, "Pixel-AP": 87.81, "Pixel-AUPRO": 25.7, "Pixel-IoU": 68.8, "Mean-Score": 77.04, "Best-Th": 0.53, "Per-Class": {"Crack_Recall": 7.07, "Spalling_Recall": 92.23, "Corrosion_Recall": 81.25, "Efflorescence_Recall": 54.71}}
+[2026-10-20 13:07:47] [Bayes-PFL (Official 30Ep) Cross-Domain Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 83.29, "Image-F1": 66.77, "Image-AP": 64.44, "Pixel-AUROC": 86.67, "Pixel-F1": 46.02, "Pixel-AP": 45.18, "Pixel-AUPRO": 56.26, "Pixel-IoU": 29.88, "Mean-Score": 63.48, "Best-Th": 0.42, "Per-Class": {"Crack_Recall": 43.07, "Spalling_Recall": 82.09, "Corrosion_Recall": 96.74, "Efflorescence_Recall": 10.27}}
+[2026-10-20 20:03:33] === Bayes-PFL (Bridge512_balance_S2DS, Official 30 Ep 2-Stage) | Trainable params: 27370017 ===

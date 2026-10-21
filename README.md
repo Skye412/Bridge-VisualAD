@@ -1,148 +1,173 @@
-# 桥梁缺陷异常检测实验完整对比与消融实验报告：VisualAD 基线 vs. Bridge-VisualAD (Ours)
+# 桥梁缺陷异常检测实验完整对比与消融实验定稿报告：Bridge-VisualAD (Ours)
 
 > [!IMPORTANT]
-> 本报告汇总了在远程服务器 `skye` (`172.24.5.200`) 的 `/home/skye/data/Skye/visualad/` 目录下、使用专用 Conda 环境 `visualad` (`/home/skye/miniconda3/envs/visualad`) 完成的全部实验：
-> 1. **主实验对比**：`VisualAD` (CVPR 2026) 基线 vs. `Bridge-VisualAD` (Ours) 在 `Bridge512_balance_S2DS` 与 `Bridge512_balance_CODEBRIM` 上的同域测试、双向跨数据集零样本迁移测试及 4 类桥梁病害细粒度像素召回率；
-> 2. **五阶段递进式消融实验 (Ablation Study)**：从 `A0 (Baseline)` 依次叠加 `+MP-BS` (`A1`)、`+WD-SAF` (`A2`)、`+AGDS-WGD` (`A3`)、`+CW-Loss & DynamicAreaScorer` (`A4`) 在双数据集同域与跨域上的完整消融指标；
-> 3. **五组高分辨率可视化对比图 (`300 DPI`)**：异常热力图与 TP/FN/FP 分割掩码对比图、五阶段消融热力图演进图、消融定量柱状/折线图及训练收敛与跨域泛化曲线图。
+> **审计与数据溯源说明（100% 对齐服务器原始 `test_metrics.json`）**：
+> 1. 本报告与代码仓库中的所有表格均由服务器脚本 `/home/skye/data/Skye/visualad/generate_all_verified_tables.py` **直接从各模型原始 `outputs/*/test_metrics.json` 自动生成**（对应服务器汇总文件 `/home/skye/data/Skye/visualad/outputs/verified_all_paper_tables.md`），不存在任何手工抄录、跨版本混用或过渡版残留。
+> 2. **汇总指标显式定义**：
+>    - **$\text{Mean}_7$ (`Mean-Score`)**：7 项标准异常检测指标的算术平均（不含与 `P-F1` 具有单调换算关系 $\text{IoU} = \frac{F_1}{2 - F_1}$ 的 `P-IoU`）：
+>      $$\text{Mean}_7 = \frac{\text{I-AUROC} + \text{I-F1} + \text{I-AP} + \text{P-AUROC} + \text{P-F1} + \text{P-AP} + \text{P-AUPRO}}{7}$$
+>    - **$\text{Mean}_5$**：5 项核心指标的算术平均（不含 `I-F1`、`I-AP`、`P-IoU`）：
+>      $$\text{Mean}_5 = \frac{\text{I-AUROC} + \text{P-AUROC} + \text{P-F1} + \text{P-AP} + \text{P-AUPRO}}{5}$$
+> 3. **模型权重与训练协议说明**：
+>    - `VisualAD (Baseline, A0)` 与本文完整模型 `Bridge-VisualAD (Ours, A4)` 及全部消融变体（`A1`、`A2`、`A3`、`A3+CW`、`A3+Scorer`）均采用**冻结预训练 `CLIP ViT-L/14@336px` 主干 + 从头随机初始化任务适配层独立训练 8 轮（8 Ep Scratch, `seed=111`, 独立验证集 `val-best` 选模）**。
+>    - 外部对比方法均按各自原论文官方训练协议运行并在独立验证集（`val`）选取最佳检查点。
 
 ---
 
-## 1. 实验环境与文件目录说明
+## 1. 仓库清理与规范化目录结构
 
-- **服务器实验根目录**：`/home/skye/data/Skye/visualad/`
-- **Conda 环境路径**：`/home/skye/miniconda3/envs/visualad` (`Python 3.10 + PyTorch 2.7.1 + CUDA + CLIP ViT-L/14@336px`)
-- **核心代码与脚本**（本地副本同步保存在 `scratch/`）：
-  - 数据集与多类别掩码解析器：[bridge_dataset.py](file:///C:/Users/z1413/.gemini/antigravity/brain/2ec3d56c-32ae-4b6a-9159-439069f92dcb/scratch/bridge_dataset.py)
-  - 四个桥梁领域创新模块实现：[bridge_modules.py](file:///C:/Users/z1413/.gemini/antigravity/brain/2ec3d56c-32ae-4b6a-9159-439069f92dcb/scratch/bridge_modules.py)
-  - 统一训练与双域评测主脚本：[run_experiments.py](file:///C:/Users/z1413/.gemini/antigravity/brain/2ec3d56c-32ae-4b6a-9159-439069f92dcb/scratch/run_experiments.py)
-  - 概率门控多尺度校准汇总脚本：[calibrate_and_finalize_report.py](file:///C:/Users/z1413/.gemini/antigravity/brain/2ec3d56c-32ae-4b6a-9159-439069f92dcb/scratch/calibrate_and_finalize_report.py)
-  - 递进式消融实验与对比图生成脚本：[run_ablation_and_figures.py](file:///C:/Users/z1413/.gemini/antigravity/brain/2ec3d56c-32ae-4b6a-9159-439069f92dcb/scratch/run_ablation_and_figures.py)
-  - 消融实验 JSON 指标文件：[ablation_metrics.json](file:///C:/Users/z1413/.gemini/antigravity/brain/2ec3d56c-32ae-4b6a-9159-439069f92dcb/scratch/ablation_metrics.json)（服务器：`/home/skye/data/Skye/visualad/outputs/ablation_metrics.json`）
-  - 服务器生成图表目录：`/home/skye/data/Skye/visualad/figures/fig1~fig5.png`
+服务器仓库 `/home/skye/data/Skye/visualad/` 已彻底清理所有早期过渡版本（如 `ours_*` Legacy 版、`a4_aligned_*` 微调版、`a3_ft_*` 5 轮微调版及旧版推理开关 JSON），仅保留以下**唯一权威、可 100% 复现的脚本与输出目录**：
 
----
-
-## 2. 同域与跨域主实验定量对比 (Main Quantitative Results)
-
-### 2.1 同域测试集定量对比 (In-Domain Test Results)
-
-| 数据集 | 方法 | 可训练参数量 | I-AUROC (%) | I-F1 (%) | I-AP (%) | P-AUROC (%) | P-F1 (%) | P-AP (%) | P-AUPRO (%) | P-IoU (%) | **Mean (7项均值)** |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **S2DS** | Baseline (`VisualAD`, CVPR'26) | 31.52M | **94.35** | **96.59** | **98.69** | 98.37 | 83.26 | 88.07 | 76.48 | 71.32 | 90.83 |
-| **S2DS** | **Ours (`Bridge-VisualAD`)** | 36.86M | 94.26 *(94.74\*)* | 96.29 | 98.66 *(98.83\*)* | **98.74 (+0.37)** | **85.65 (+2.39)** | **91.75 (+3.68)** | **80.75 (+4.27)** | **74.91 (+3.59)** | **92.30 (+1.47)** |
-| **CODEBRIM** | Baseline (`VisualAD`, CVPR'26) | 31.52M | 91.80 | **79.92** | 86.54 | 95.46 | 64.46 | 72.17 | 73.71 | 47.56 | 80.58 |
-| **CODEBRIM** | **Ours (`Bridge-VisualAD`)** | 36.86M | **93.66 (+1.86)** | 79.64 | **88.64 (+2.10)** | **96.01 (+0.55)** | **70.04 (+5.58)** | **78.03 (+5.86)** | **74.36** *(77.68\*\*)* | **53.89 (+6.33)** | **82.91 (+2.33)** |
-
-### 2.2 跨数据集零样本泛化对比 (Cross-Domain Zero-Shot Transfer: S2DS $\leftrightarrow$ CODEBRIM)
-
-| 迁移方向 | 方法 | I-AUROC (%) | I-F1 (%) | I-AP (%) | P-AUROC (%) | P-F1 (%) | P-AP (%) | P-AUPRO (%) | P-IoU (%) | **Mean (7项均值)** |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **S2DS $\rightarrow$ CODEBRIM** | Baseline (`VisualAD`) | 83.44 | **68.62** | 66.67 | 88.45 | 49.79 | 51.88 | 66.29 | 33.14 | 67.88 |
-| **S2DS $\rightarrow$ CODEBRIM** | **Ours (`Bridge-VisualAD`)** | **83.68** *(85.46\*)* | 68.61 | **67.61 (+0.94)** | **90.59 (+2.14)** | **50.67 (+0.88)** | **53.06 (+1.18)** | **72.89 (+6.60)** | **33.93 (+0.79)** | **69.59 (+1.71)** |
-| **CODEBRIM $\rightarrow$ S2DS** | Baseline (`VisualAD`) | 83.13 | 91.78 | 95.97 | 96.43 | **72.84** | 73.20 | 42.12 | **57.28** | 79.35 |
-| **CODEBRIM $\rightarrow$ S2DS** | **Ours (`Bridge-VisualAD`)** | **85.18 (+2.05)** | **92.79 (+1.01)** | **96.09 (+0.12)** | **96.64 (+0.21)** | 72.24 | **76.25 (+3.05)** | **46.15 (+4.03)** | 56.55 | **80.76 (+1.41)** |
-
-### 2.3 四类桥梁病害细粒度像素召回率对比 (Per-Defect-Class Pixel Recall %)
-
-| 评测设定 | 数据集 / 迁移方向 | 方法 | Crack (裂缝) | Spalling (剥落) | Corrosion (锈蚀) | Efflorescence (泛碱) |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
-| **同域 (In-Domain)** | **S2DS** | Baseline (`VisualAD`) | 69.66 | 92.05 | 84.31 | 57.68 |
-| **同域 (In-Domain)** | **S2DS** | **Ours (`Bridge-VisualAD`)** | **71.83 (+2.17)** *(82.15 in A2)* | **92.59 (+0.54)** | **85.16 (+0.85)** | **61.26 (+3.58)** |
-| **同域 (In-Domain)** | **CODEBRIM** | Baseline (`VisualAD`) | 49.62 | **78.40** | **97.21** | 57.06 |
-| **同域 (In-Domain)** | **CODEBRIM** | **Ours (`Bridge-VisualAD`)** | 48.24 *(55.21 in A1)* | 71.91 | 95.60 | **60.51 (+3.45)** *(62.49 in A2)* |
-| **跨域 (Zero-Shot)** | **S2DS $\rightarrow$ CODEBRIM** | Baseline (`VisualAD`) | 47.15 | 75.45 | 95.71 | 7.91 |
-| **跨域 (Zero-Shot)** | **S2DS $\rightarrow$ CODEBRIM** | **Ours (`Bridge-VisualAD`)** | **74.92 (+27.77)** | **84.16 (+8.71)** | **97.31 (+1.60)** | **25.94 (+18.03)** |
-| **跨域 (Zero-Shot)** | **CODEBRIM $\rightarrow$ S2DS** | Baseline (`VisualAD`) | 33.47 | 83.09 | **81.11** | 73.53 |
-| **跨域 (Zero-Shot)** | **CODEBRIM $\rightarrow$ S2DS** | **Ours (`Bridge-VisualAD`)** | **58.99 (+25.52)** | **83.74 (+0.65)** | 67.91 | **91.93 (+18.40)** |
+- **核心模块与数据集**：
+  - `bridge_dataset.py`：桥梁多病害（Crack / Spalling / Corrosion / Efflorescence）数据集加载器
+  - `bridge_modules.py`：本文四个核心组件（`MP-BS`、`WD-SAF`、`AGDS-WGD`、`CW-Loss & DynamicAreaScorer`）
+  - `eval_bridge_metrics_common.py`：统一的图像级、像素级、连通域 `AUPRO` 及四类病害召回率评测函数库
+- **训练与评测脚本**：
+  - `run_experiments.py`：`A0 (Baseline)` 训练与评测
+  - `run_true_ablation_train.py`：`A1 (+MP-BS)`、`A2 (+WD-SAF)`、`A3 (+AGDS-WGD)` 8 轮独立训练
+  - `run_a3_to_a4_scratch_8ep.py`：`A3 + CW` 与 `A3 + Scorer` 8 轮独立训练
+  - `run_a4_scratch_8ep.py`：`A4 (Ours Full)` 8 轮独立训练
+  - `run_comp_{dinomaly,anomalyclip,bayespfl,adaptclip,wpformer,mixercseg}.py`：6 个外部顶会对比模型训练与评测
+  - `generate_all_verified_tables.py`：直接从原始 `test_metrics.json` 生成全部对比表、消融表与宏平均表
+- **权威输出目录 (`outputs/`)**：
+  - 基线与本文模型：`baseline_{S2DS,CODEBRIM}/`、`a4_scratch8ep_{S2DS,CODEBRIM}/`
+  - 8 轮独立渐进与正交消融：`a1_mp_bs_*/`、`a2_wd_saf_*/`、`a3_agds_wgd_*/`、`a3_plus_cw_8ep_*/`、`a3_plus_scorer_8ep_*/`
+  - 外部对比模型：`comp_{dinomaly,anomalyclip,bayespfl,adaptclip,wpformer,mixercseg}_{S2DS,CODEBRIM}/`
+  - 自动汇总文件：`verified_all_paper_tables.md`、`ablation_metrics_true_standalone.json`、`ablation_scratch_8ep_factorial_a3_to_a4.json`、`comparison_metrics_all.json`
 
 ---
 
-## 3. 五阶段递进式消融实验 (Progressive 5-Stage Ablation Study)
+## 2. 主对比实验结果（Main SOTA Comparison Tables）
 
-为了严格验证我们在 `Bridge-VisualAD` 中提出的四个核心模块各自的独立贡献与协同增益，我们在 `Bridge512_balance_S2DS` 和 `Bridge512_balance_CODEBRIM`（含同域测试与跨域零样本迁移）上进行了五阶段递进式消融实验：
+### 2.1 `Bridge512_balance_S2DS`（同域测试 In-Domain Test）
 
-- **`A0: Baseline (VisualAD)`**：原版 `VisualAD`（单一全局正常原型 + 逐点 MLP `SAF` + $37 \times 37 \rightarrow 518 \times 518$ 双线性插值上采样 + 固定 `Top-1%` 图像级池化 + 标准 `Focal + Dice` 损失）。
-- **`A1: + MP-BS`**：在基线上引入 **模块一（多原型正常子簇库 $M=6$ 与图像级背景抑制，`MultiPrototypeBackgroundDisentangler`）**，保留逐点 MLP `SAF`。
-- **`A2: + MP-BS + WD-SAF`**：在 `A1` 基础上引入 **模块二（小波高频 MSCM 调制与方向性条状卷积边缘门控特征重校准，`WaveletDirectionalSAF`）**。
-- **`A3: + MP-BS + WD-SAF + AGDS-WGD`**：在 `A2` 基础上引入 **模块三（四方向蛇形异常引导动态扫描与原图 Haar 小波门控高分辨率解码器，`AnomalyGuidedDynamicScanDecoder`）**，采用线性非门控融合与固定 `Top-1%` 图像池化。
-- **`A4: Full Bridge-VisualAD (+ CW-Loss & DAS)`**：完整模型，进一步引入 **模块四（置信度加权形态学边缘损失、概率门控多尺度乘性-加性校准与动态面积感知 `0.2%/1.0%/5.0%` 评分器，`DynamicAreaScorer`）**。
-
-### 3.1 `Bridge512_balance_S2DS` 同域消融实验结果
-
-| 消融阶段 | MP-BS | WD-SAF | AGDS-WGD | CW-Loss & DAS | I-AUROC | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean (7项)** | Crack Rec | Spall Rec | Efflor Rec |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **A0: Baseline** | - | - | - | - | **94.35** | 98.37 | 83.26 | 88.06 | 76.48 | 71.33 | 90.83 | 69.66 | 92.06 | 57.68 |
-| **A1: + MP-BS** | $\checkmark$ | - | - | - | 92.91 | 98.49 | 84.55 | 90.38 | **80.87** | 73.24 | 91.45 (+0.62) | 80.91 | 92.24 | **63.20** |
-| **A2: + WD-SAF** | $\checkmark$ | $\checkmark$ | - | - | 93.21 | 98.54 | 83.90 | 90.01 | 79.43 | 72.27 | 91.20 (+0.37) | **82.15** | 92.40 | 58.78 |
-| **A3: + AGDS-WGD** | $\checkmark$ | $\checkmark$ | $\checkmark$ | - | 93.17 | 98.70 | 85.31 | 91.40 | 75.89 | 74.38 | 91.14 (+0.31) | 74.98 | 92.57 | 60.19 |
-| **A4: Full Ours** | $\checkmark$ | $\checkmark$ | $\checkmark$ | $\checkmark$ | 94.26 | **98.74** | **85.65** | **91.75** | 80.75 | **74.91** | **92.30 (+1.47)** | 71.83 | **92.59** | 61.26 |
-
-### 3.2 `Bridge512_balance_CODEBRIM` 同域消融实验结果
-
-| 消融阶段 | MP-BS | WD-SAF | AGDS-WGD | CW-Loss & DAS | I-AUROC | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean (7项)** | Crack Rec | Corr Rec | Efflor Rec |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **A0: Baseline** | - | - | - | - | 91.80 | 95.46 | 64.47 | 72.16 | 73.72 | 47.56 | 80.58 | 49.62 | **97.21** | 57.08 |
-| **A1: + MP-BS** | $\checkmark$ | - | - | - | 93.41 | 95.65 | 68.46 | 76.05 | **76.49** | 52.04 | 82.56 (+1.98) | **55.21** | 95.06 | 60.63 |
-| **A2: + WD-SAF** | $\checkmark$ | $\checkmark$ | - | - | 93.25 | 95.88 | 68.67 | 76.84 | 75.37 | 52.29 | 82.41 (+1.83) | 51.50 | 96.53 | **62.49** |
-| **A3: + AGDS-WGD** | $\checkmark$ | $\checkmark$ | $\checkmark$ | - | 93.43 | 95.99 | 69.73 | 77.87 | 73.83 | 53.53 | 82.61 (+2.03) | 48.20 | 95.84 | 60.16 |
-| **A4: Full Ours** | $\checkmark$ | $\checkmark$ | $\checkmark$ | $\checkmark$ | **93.66** | **96.01** | **70.04** | **78.03** | 74.36 | **53.89** | **82.91 (+2.33)** | 48.24 | 95.60 | 60.51 |
-
-### 3.3 跨数据集零样本迁移消融实验结果 (`S2DS -> CODEBRIM` & `CODEBRIM -> S2DS`)
-
-| 迁移方向 | 消融阶段 | I-AUROC | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean (7项)** | Crack Rec | Spall Rec | Efflor Rec |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **S2DS $\rightarrow$ CODEBRIM** | **A0: Baseline** | 83.44 | 88.45 | 49.78 | 51.87 | 66.28 | 33.14 | 67.87 | 47.15 | 75.45 | 7.91 |
-| **S2DS $\rightarrow$ CODEBRIM** | **A1: + MP-BS** | **85.26** | 89.27 | 49.75 | 51.62 | 68.35 | 33.11 | 69.17 (+1.30) | 70.23 | 83.89 | 25.86 |
-| **S2DS $\rightarrow$ CODEBRIM** | **A2: + WD-SAF** | 84.56 | **90.60** | 50.49 | **53.28** | 71.23 | 33.77 | **69.70 (+1.83)** | **79.24** | 86.47 | 32.43 |
-| **S2DS $\rightarrow$ CODEBRIM** | **A3: + AGDS-WGD** | 84.62 | **90.60** | 50.62 | 53.17 | 66.85 | 33.89 | 69.21 (+1.34) | 79.21 | **86.51** | **33.42** |
-| **S2DS $\rightarrow$ CODEBRIM** | **A4: Full Ours** | 83.68 | 90.59 | **50.67** | 53.06 | **72.89** | **33.93** | 69.59 (+1.72) | 74.92 | 84.16 | 25.94 |
-| **CODEBRIM $\rightarrow$ S2DS** | **A0: Baseline** | 83.13 | 96.43 | 72.84 | 73.19 | 42.12 | 57.28 | 79.35 | 33.47 | 83.08 | 73.54 |
-| **CODEBRIM $\rightarrow$ S2DS** | **A1: + MP-BS** | 84.99 | 96.19 | 71.68 | 73.52 | **55.96** | 55.86 | **81.57 (+2.22)** | **67.24** | 80.93 | 86.50 |
-| **CODEBRIM $\rightarrow$ S2DS** | **A2: + WD-SAF** | 84.17 | 96.57 | **73.10** | 74.58 | 49.17 | **57.60** | 80.83 (+1.48) | 56.35 | 83.02 | 90.58 |
-| **CODEBRIM $\rightarrow$ S2DS** | **A3: + AGDS-WGD** | 84.37 | **96.66** | 72.73 | 76.07 | 49.32 | 57.15 | 81.06 (+1.71) | 56.41 | 82.50 | 91.09 |
-| **CODEBRIM $\rightarrow$ S2DS** | **A4: Full Ours** | **85.18** | 96.64 | 72.24 | **76.25** | 46.15 | 56.55 | 80.76 (+1.41) | 58.99 | **83.74** | **91.93** |
-
-> [!TIP]
-> **消融实验机制剖析（可直接用于论文 Ablation Study 章节撰写）**：
-> 1. **`A0 -> A1 (+MP-BS)` 的核心作用**：通过将单一正常原型扩展为 $M=6$ 个正交初始化的正常背景子簇并减去单图背景偏移（如裂缝标尺网格、混凝土气孔、模板接缝、阴影），`A1` 在 `S2DS` 上使 **`P-AUPRO` 从 `76.48%` 跃升至 `80.87%` (+4.39%)、`Crack Recall` 从 `69.66%` 跃升至 `80.91%` (+11.25%)**；在 `CODEBRIM` 上使 **`P-F1` 从 `64.47%` 提升至 `68.46%` (+3.99%)、`I-AUROC` 从 `91.80%` 提升至 `93.41%` (+1.61%)**；在跨域迁移中更是让 `CODEBRIM -> S2DS` 的 `P-AUPRO` 从 `42.12%` 暴涨至 `55.96%` (+13.84%)！
-> 2. **`A1 -> A2 (+WD-SAF)` 的核心作用**：引入 2D Haar 小波高频 MSCM 分支与 $1\times 5, 5\times 1$ 条状方向卷积边缘门控后，`A2` 显著强化了细长裂缝的拓扑连通性——在 `S2DS` 同域测试中将 **`Crack Recall` 进一步推高至 `82.15%`（比基线高 +12.49%）**，在 `S2DS -> CODEBRIM` 跨域测试中将 **`P-AUROC` 推高至 `90.60%`、`Crack Recall` 推高至 `79.24%`（比基线高 +32.09%）**！
-> 3. **`A2 -> A3 (+AGDS-WGD)` 的核心作用**：引入四方向蛇形异常引导动态扫描与原图 Haar 小波门控高分辨率解码器后，全分辨率下的病害边界被大幅锐化，使像素级精确率与交并比显著上升——`S2DS` 的 **`P-F1` 升至 `85.31%`、`P-AP` 升至 `91.40%`、`P-IoU` 升至 `74.38%`**；`CODEBRIM` 的 **`P-F1` 升至 `69.73%`、`P-AP` 升至 `77.87%`、`P-IoU` 升至 `53.53%`**。
-> 4. **`A3 -> A4 (+CW-Loss & DynamicAreaScorer)` 的核心作用**：单纯线性叠加高分辨率解码器（`A3`）虽然提升了 `P-F1/IoU`，但局部高频响应会轻微拉低连通域指标 `P-AUPRO` 和细微裂缝图像级得分；引入 **置信度加权形态学边缘损失、概率门控乘性校准与动态面积感知评分器 (`0.2% / 1.0% / 5.0%`)** 后，`A4` 同时兼顾了高分辨率边界锐度与区域连通性，在 `S2DS`（`Mean=92.30%, P-F1=85.65%, P-AP=91.75%, P-AUPRO=80.75%`）和 `CODEBRIM`（`Mean=82.91%, I-AUROC=93.66%, P-F1=70.04%, P-AP=78.03%`）上双双取得最高综合性能！
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dinomaly (CVPR 2025)** | 10k iters (val-best) | 66.76 | 91.22 | 89.82 | 88.37 | 51.06 | 40.13 | 18.58 | 34.29 | **63.71** | 52.98 | 26.43 | 67.72 | 89.62 | 47.24 |
+| **MixerCSeg (CVPR 2026)** | 50 Ep (val-best) | 68.37 | 91.27 | 91.32 | 94.83 | 68.18 | 72.30 | 17.69 | 51.72 | **71.99** | 64.27 | 39.91 | 80.02 | 86.28 | 51.73 |
+| **AnomalyCLIP (ICLR 2024)** | 15 Ep (val-best) | 74.83 | 91.64 | 93.31 | 95.19 | 67.99 | 67.96 | 42.13 | 51.50 | **76.15** | 69.62 | 59.08 | 81.68 | 86.23 | 53.07 |
+| **Bayes-PFL (CVPR 2025)** | Up to 30 Ep (2-Stg, early-stop) | 92.23 | 94.71 | 97.88 | 97.96 | 81.51 | 87.81 | 25.70 | 68.80 | **82.54** | 77.04 | 7.07 | 92.23 | 81.25 | 54.71 |
+| **AdaptCLIP (AAAI 2026)** | 15 Ep (val-best) | 89.49 | 93.86 | 97.71 | 97.65 | 82.13 | 82.18 | 60.65 | 69.68 | **86.24** | 82.42 | 61.26 | 91.58 | 87.79 | 47.68 |
+| **WPFormer (CVPR 2025)** | 60 Ep (val-best) | 87.54 | 94.60 | 96.16 | 95.81 | **89.27** | 86.56 | 67.35 | **80.62** | **88.18** | 85.31 | 58.12 | 92.75 | **91.47** | **71.64** |
+| **VisualAD (Baseline, A0)** | 8 Ep (Scratch, val-best) | **94.35** | **96.59** | **98.69** | 98.37 | 83.26 | 88.07 | **76.48** | 71.32 | **90.83** | 88.11 | **69.66** | 92.05 | 84.31 | 57.68 |
+| **Bridge-VisualAD (Ours, A4)** | 8 Ep (Scratch, val-best) | 93.95 | 95.84 | 98.55 | **98.72** | 85.39 | **91.56** | 76.42 | 74.51 | **91.49** | **89.21** | 66.76 | **93.82** | 86.19 | 59.03 |
 
 ---
 
-## 4. 视觉与定量对比图集 (Qualitative & Quantitative Visualizations)
+### 2.2 `Bridge512_balance_CODEBRIM`（同域测试 In-Domain Test）
 
-### 4.1 定性热力图与分割掩码对比图 (`S2DS` 与 `CODEBRIM`)
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dinomaly (CVPR 2025)** | 10k iters (val-best) | 81.01 | 66.38 | 54.93 | 83.55 | 39.84 | 27.94 | 37.21 | 24.87 | **55.84** | 53.91 | 71.29 | 68.98 | 94.19 | 50.95 |
+| **AnomalyCLIP (ICLR 2024)** | 15 Ep (val-best) | 82.28 | 66.33 | 68.88 | 91.98 | 54.92 | 56.98 | 66.44 | 37.85 | **69.69** | 70.52 | **78.56** | **81.30** | **97.27** | 36.74 |
+| **WPFormer (CVPR 2025)** | 60 Ep (val-best) | 88.37 | 74.33 | 79.46 | 79.07 | 66.36 | 59.04 | 54.59 | 49.66 | **71.60** | 69.49 | 53.52 | 46.73 | 70.33 | **60.53** |
+| **Bayes-PFL (CVPR 2025)** | Up to 30 Ep (2-Stg, early-stop) | 91.66 | 76.09 | 85.36 | 93.05 | 57.93 | 62.27 | 71.31 | 40.77 | **76.81** | 75.24 | 74.17 | 70.81 | 96.68 | 50.22 |
+| **AdaptCLIP (AAAI 2026)** | 15 Ep (val-best) | 92.51 | 76.67 | 86.62 | 95.69 | 69.01 | 74.81 | 77.68 | 52.68 | **81.86** | 81.94 | 60.25 | 74.88 | 92.43 | 58.15 |
+| **VisualAD (Baseline, A0)** | 8 Ep (Scratch, val-best) | 91.80 | **79.92** | 86.54 | 95.46 | 64.46 | 72.17 | 73.71 | 47.56 | **80.58** | 79.52 | 49.62 | 78.40 | 97.21 | 57.06 |
+| **Bridge-VisualAD (Ours, A4)** | 8 Ep (Scratch, val-best) | **93.22** | 78.53 | **87.74** | **95.71** | **69.77** | **76.71** | **81.50** | **53.57** | **83.31** | **83.38** | 63.13 | 77.01 | 95.38 | 57.36 |
 
-以下两幅定性对比图展示了代表性桥梁病害样本上的 6 列对比：`(a) 输入图像` | `(b) 真实病害掩码 GT` | `(c) VisualAD 基线异常热力图` | `(d) VisualAD 分割结果 (绿=TP, 黄=漏检FN, 红=误报FP)` | `(e) Bridge-VisualAD (Ours) 异常热力图` | `(f) Bridge-VisualAD 分割结果`。
+*(注：`MixerCSeg` 的 `CODEBRIM` 50 轮完整训练正在后台收尾，完成后将自动追加进上表与表 2.4)*
 
-````carousel
-![Bridge512_balance_S2DS 定性对比图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig1_qualitative_S2DS.png)
-<!-- slide -->
-![Bridge512_balance_CODEBRIM 定性对比图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig2_qualitative_CODEBRIM.png)
-````
+---
+
+### 2.3 `S2DS -> CODEBRIM`（跨域零样本测试 Cross-Domain Zero-Shot）
+
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dinomaly (CVPR 2025)** | 10k iters (val-best) | 71.90 | 58.48 | 46.25 | 79.67 | 35.45 | 23.26 | 38.61 | 21.55 | **50.52** | 49.78 | 60.45 | 71.78 | 96.12 | **37.97** |
+| **MixerCSeg (CVPR 2026)** | 50 Ep (val-best) | 73.65 | 56.92 | 53.82 | 79.48 | 42.39 | 37.01 | 35.31 | 26.89 | **54.08** | 53.57 | 63.79 | 74.14 | 96.58 | 7.05 |
+| **WPFormer (CVPR 2025)** | 60 Ep (val-best) | 76.10 | 61.71 | 56.90 | 70.40 | 49.37 | 34.72 | 42.88 | 32.78 | **56.01** | 54.69 | 39.09 | 72.59 | 94.91 | 4.03 |
+| **AnomalyCLIP (ICLR 2024)** | 15 Ep (val-best) | 64.06 | 51.11 | 45.36 | 86.58 | 45.49 | 46.79 | 61.99 | 29.44 | **57.34** | 60.98 | **86.56** | 82.03 | **97.25** | 16.93 |
+| **AdaptCLIP (AAAI 2026)** | 15 Ep (val-best) | 78.46 | 60.81 | 61.37 | 86.40 | 48.02 | 48.04 | 60.05 | 31.60 | **63.31** | 64.19 | 53.32 | 76.69 | 95.65 | 4.45 |
+| **Bayes-PFL (CVPR 2025)** | Up to 30 Ep (2-Stg, early-stop) | 83.29 | 66.77 | 64.44 | 86.67 | 46.02 | 45.18 | 56.26 | 29.88 | **64.09** | 63.48 | 43.07 | **82.09** | 96.74 | 10.27 |
+| **VisualAD (Baseline, A0)** | 8 Ep (Scratch, val-best) | **83.44** | **68.62** | **66.67** | 88.45 | 49.79 | 51.88 | 66.29 | 33.14 | **67.88** | 67.97 | 47.15 | 75.45 | 95.71 | 7.91 |
+| **Bridge-VisualAD (Ours, A4)** | 8 Ep (Scratch, val-best) | 83.04 | 67.87 | 64.04 | **90.12** | **49.99** | **52.85** | **67.91** | **33.33** | **67.97** | **68.78** | 64.61 | 81.31 | 96.38 | 18.23 |
+
+---
+
+### 2.4 `CODEBRIM -> S2DS`（跨域零样本测试 Cross-Domain Zero-Shot）
+
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dinomaly (CVPR 2025)** | 10k iters (val-best) | 61.97 | 91.11 | 87.82 | 81.04 | 40.10 | 27.75 | 13.35 | 25.08 | **57.59** | 44.84 | 29.68 | 59.01 | **86.35** | 61.40 |
+| **WPFormer (CVPR 2025)** | 60 Ep (val-best) | 84.70 | 92.09 | 96.02 | 74.99 | 55.51 | 48.35 | 35.34 | 38.42 | **69.57** | 59.78 | 70.53 | 47.85 | 48.29 | 33.02 |
+| **AnomalyCLIP (ICLR 2024)** | 15 Ep (val-best) | 71.89 | 91.11 | 92.68 | 91.58 | 55.88 | 52.95 | 35.57 | 38.77 | **70.24** | 61.57 | 56.02 | 70.08 | 78.59 | 81.59 |
+| **Bayes-PFL (CVPR 2025)** | Up to 30 Ep (2-Stg, early-stop) | 85.19 | 92.23 | 96.74 | 90.59 | 53.48 | 53.43 | 36.60 | 36.50 | **72.61** | 63.86 | 54.81 | 60.35 | 74.94 | **83.49** |
+| **AdaptCLIP (AAAI 2026)** | 15 Ep (val-best) | 78.59 | 91.90 | 94.48 | 94.58 | 65.83 | 66.63 | 48.59 | 49.07 | **77.23** | 70.84 | 51.73 | 74.12 | 66.85 | 82.63 |
+| **VisualAD (Baseline, A0)** | 8 Ep (Scratch, val-best) | 83.13 | 91.78 | 95.97 | 96.43 | 72.84 | 73.20 | 42.12 | 57.28 | **79.35** | 73.54 | 33.47 | 83.09 | 81.11 | 73.53 |
+| **Bridge-VisualAD (Ours, A4)** | 8 Ep (Scratch, val-best) | **89.30** | **94.07** | **97.27** | **97.08** | **74.54** | **76.77** | **67.08** | **59.42** | **85.16** | **80.95** | **85.80** | **85.18** | 81.49 | 79.11 |
+
+---
+
+## 3. 独立训练 8 轮渐进消融与组件正交消融（Standalone 8-Epoch Ablation Studies）
+
+### 3.1 渐进消融（`A0 -> A1 -> A2 -> A3 -> A4`）
+
+#### (a) `Bridge512_balance_S2DS`（同域测试）
+
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **A0 (Baseline: VisualAD)** | 8 Ep (Scratch, val-best) | **94.35** | **96.59** | 98.69 | 98.37 | 83.26 | 88.07 | 76.48 | 71.32 | 90.83 | 88.11 | 69.66 | 92.05 | 84.31 | 57.68 |
+| **A1 (+MP-BS)** | 8 Ep (Scratch, val-best) | 94.28 | 96.20 | **98.70** | 98.46 | 83.68 | 89.76 | **82.23** | 71.94 | **91.90** | **89.68** | **74.62** | 92.38 | **86.87** | 55.14 |
+| **A2 (+MP-BS +WD-SAF)** | 8 Ep (Scratch, val-best) | 93.69 | 95.87 | 98.52 | 98.49 | 83.98 | 89.88 | 77.25 | 72.39 | 91.10 | 88.66 | 70.67 | 92.69 | 86.14 | 56.86 |
+| **A3 (+MP-BS +WD-SAF +AGDS-WGD)** | 8 Ep (Scratch, val-best) | 93.36 | 95.23 | 98.45 | 98.46 | 83.99 | 89.25 | 76.17 | 72.39 | 90.70 | 88.25 | 72.09 | 93.39 | 83.22 | 58.11 |
+| **A4 (Ours Full: +CW +Scorer)** | 8 Ep (Scratch, val-best) | 93.95 | 95.84 | 98.55 | **98.72** | **85.39** | **91.56** | 76.42 | **74.51** | 91.49 | 89.21 | 66.76 | **93.82** | 86.19 | **59.03** |
+
+#### (b) `Bridge512_balance_CODEBRIM`（同域测试）
+
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **A0 (Baseline: VisualAD)** | 8 Ep (Scratch, val-best) | 91.80 | **79.92** | 86.54 | 95.46 | 64.46 | 72.17 | 73.71 | 47.56 | 80.58 | 79.52 | 49.62 | **78.40** | **97.21** | 57.06 |
+| **A1 (+MP-BS)** | 8 Ep (Scratch, val-best) | 92.88 | 78.05 | 87.14 | **95.79** | 67.47 | 75.17 | 73.62 | 50.91 | 81.45 | 80.99 | 53.41 | 75.05 | 97.16 | **61.24** |
+| **A2 (+MP-BS +WD-SAF)** | 8 Ep (Scratch, val-best) | 93.05 | 79.85 | 87.67 | 95.55 | 68.09 | 75.72 | 69.82 | 51.61 | 81.39 | 80.45 | 54.24 | 77.13 | 96.41 | 57.70 |
+| **A3 (+MP-BS +WD-SAF +AGDS-WGD)** | 8 Ep (Scratch, val-best) | 91.84 | 76.04 | 86.31 | 95.74 | **71.00** | **78.12** | 79.77 | **55.04** | 82.69 | 83.29 | 49.58 | 74.44 | 95.26 | 55.69 |
+| **A4 (Ours Full: +CW +Scorer)** | 8 Ep (Scratch, val-best) | **93.22** | 78.53 | **87.74** | 95.71 | 69.77 | 76.71 | **81.50** | 53.57 | **83.31** | **83.38** | **63.13** | 77.01 | 95.38 | 57.36 |
+
+#### (c) `S2DS -> CODEBRIM`（跨域零样本测试）
+
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **A0 (Baseline: VisualAD)** | 8 Ep (Scratch, val-best) | 83.44 | 68.62 | **66.67** | 88.45 | 49.79 | 51.88 | 66.29 | 33.14 | 67.88 | 67.97 | 47.15 | 75.45 | 95.71 | 7.91 |
+| **A1 (+MP-BS)** | 8 Ep (Scratch, val-best) | 82.89 | 66.44 | 65.39 | 88.19 | 49.31 | 51.39 | **70.66** | 32.72 | 67.75 | 68.49 | 56.60 | 78.65 | 96.61 | 8.70 |
+| **A2 (+MP-BS +WD-SAF)** | 8 Ep (Scratch, val-best) | 83.96 | 68.20 | 66.43 | 89.66 | **51.06** | **53.28** | 66.51 | **34.28** | 68.44 | **68.89** | **68.49** | **84.20** | **97.53** | **20.16** |
+| **A3 (+MP-BS +WD-SAF +AGDS-WGD)** | 8 Ep (Scratch, val-best) | **84.30** | **69.83** | 66.47 | 89.75 | 49.94 | 52.37 | 67.08 | 33.28 | **68.53** | 68.69 | 67.62 | 83.79 | 96.94 | 19.55 |
+| **A4 (Ours Full: +CW +Scorer)** | 8 Ep (Scratch, val-best) | 83.04 | 67.87 | 64.04 | **90.12** | 49.99 | 52.85 | 67.91 | 33.33 | 67.97 | 68.78 | 64.61 | 81.31 | 96.38 | 18.23 |
+
+#### (d) `CODEBRIM -> S2DS`（跨域零样本测试）
+
+| Method / Variant | Protocol | I-AUROC | I-F1 | I-AP | P-AUROC | P-F1 | P-AP | P-AUPRO | P-IoU | **Mean-7** | **Mean-5** | Crack | Spalling | Corrosion | Efflor. |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **A0 (Baseline: VisualAD)** | 8 Ep (Scratch, val-best) | 83.13 | 91.78 | 95.97 | 96.43 | 72.84 | 73.20 | 42.12 | 57.28 | 79.35 | 73.54 | 33.47 | 83.09 | 81.11 | 73.53 |
+| **A1 (+MP-BS)** | 8 Ep (Scratch, val-best) | 85.03 | 92.51 | 96.19 | 97.05 | 74.18 | **78.66** | 51.12 | 58.95 | 82.11 | 77.21 | 50.53 | **85.73** | 74.91 | 70.04 |
+| **A2 (+MP-BS +WD-SAF)** | 8 Ep (Scratch, val-best) | 84.18 | 92.25 | 96.13 | 96.76 | 73.50 | 76.39 | 44.84 | 58.10 | 80.58 | 75.13 | 45.23 | 85.72 | 75.82 | **80.24** |
+| **A3 (+MP-BS +WD-SAF +AGDS-WGD)** | 8 Ep (Scratch, val-best) | 88.41 | 93.40 | 96.89 | 96.99 | **74.62** | 76.56 | 66.90 | **59.52** | 84.82 | 80.70 | 75.00 | 83.29 | 76.02 | 73.71 |
+| **A4 (Ours Full: +CW +Scorer)** | 8 Ep (Scratch, val-best) | **89.30** | **94.07** | **97.27** | **97.08** | 74.54 | 76.77 | **67.08** | 59.42 | **85.16** | **80.95** | **85.80** | 85.18 | **81.49** | 79.11 |
+
+---
+
+### 3.2 `A3 -> A4` 组件消融（`A3` vs `A3+CW` vs `A3+Scorer` vs `A4`）与四场景等权宏平均
+
+| Variant (Standalone 8 Ep) | S2DS In | CODEBRIM In | S2DS->CODEBRIM | CODEBRIM->S2DS | **Macro Mean-7** | **Macro Mean-5** | **Macro Crack Recall** |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **A0 (Baseline: VisualAD)** | 90.83 | 80.58 | 67.88 | 79.35 | **79.66** | **77.28** | **49.98** |
+| **A1 (+MP-BS)** | 91.90 | 81.45 | 67.75 | 82.11 | **80.80** | **79.09** | **58.79** |
+| **A2 (+MP-BS +WD-SAF)** | 91.10 | 81.39 | 68.44 | 80.58 | **80.38** | **78.28** | **59.66** |
+| **A3 (+MP-BS +WD-SAF +AGDS-WGD)** | 90.70 | 82.69 | **68.53** | 84.82 | **81.69** | **80.23** | **66.07** |
+| **A3 + CW (Boundary Loss & Gating)** | 91.42 | 82.73 | 68.30 | 84.22 | **81.67** | **80.15** | **67.11** |
+| **A3 + Scorer (Dynamic Area Scorer)** | **91.92** | 80.82 | 66.29 | 83.44 | **80.62** | **79.09** | **58.47** |
+| **A4 (Ours Full: +CW +Scorer)** | 91.49 | **83.31** | 67.97 | **85.16** | **81.98 (最高)** | **80.58 (最高)** | **70.08 (最高)** |
 
 > [!NOTE]
-> **典型案例视觉解析**：
-> - 在 `CODEBRIM` 第 1 行与第 5 行（带有**裂缝测宽标尺网格干扰**的混凝土细裂缝图像）中，基线 `VisualAD` 被标尺刻度线严重误导，在整个标尺区域产生大面积伪影（第 1 行 `F1 = 0.0%`，第 5 行 `F1 = 13.5%`）；而我们的 `Bridge-VisualAD` 借助 `MP-BS` 多原型背景抑制完美滤除了标尺与背景纹理干扰，并通过 `WD-SAF` 与 `AGDS-WGD` 精准分割出右下角/右上角的细微裂缝（第 1 行 `F1 = 70.5% (+70.5%)`，第 5 行 `F1 = 77.6% (+64.1%)`）！
-> - 在 `S2DS` 与 `CODEBRIM` 的剥落 (`Spalling`)、泛碱 (`Efflorescence`) 与锈蚀 (`Corrosion`) 样本中，基线预测存在大量内部空洞（黄色漏检区域 `FN`）和边缘外溢（红色误报区域 `FP`），而 `Bridge-VisualAD` 的预测掩码（绿色 `TP`）完整贴合真实病害几何轮廓。
+> **严谨的消融结论表述建议（直接用于论文撰写）**：
+> - 各模块在不同数据集和迁移方向上的优势存在互补性，完整模型 `A4` 在所报告的**四场景等权宏平均指标（`Macro Mean-7 = 81.98%`、`Macro Mean-5 = 80.58%`、`Macro Crack Recall = 70.08%`）上达到最高**：
+>   1. `MP-BS (A1)` 在 `S2DS` 同域上带来最显著的单一模块增益（`Mean-7` 从 `90.83%` 提升至 `91.90%`），通过多正常原型抑制背景伪影；
+>   2. `WD-SAF (A2)` 与 `AGDS-WGD (A3)` 通过小波高频方向增强与动态扫描解码显著提升跨数据集迁移能力（`S2DS -> CODEBRIM` 提升至 `68.53%`，`CODEBRIM -> S2DS` 从 `79.35%` 跃升至 `84.82%`）；
+>   3. 在 `A3 -> A4` 组件消融中，单独加入 `Scorer` 在 `S2DS` 同域表现突出（`Mean-7 = 91.92%`），但在复杂多病害数据集 `CODEBRIM` 上若缺乏边界与置信度约束则易受背景噪声干扰；而将 `CW`（边界损失及配套置信度门控）与 `Scorer` 结合后，`A4` 在 `CODEBRIM` 同域（`83.31%`）和 `CODEBRIM -> S2DS` 跨域（`85.16%`）上取得最优综合表现。
 
 ---
 
-### 4.2 五阶段递进式消融热力图视觉演进 (`A0 -> A1 -> A2 -> A3 -> A4`)
+## 4. 更新后的可视化图表（100% 匹配 8 轮独立训练数据）
 
-下图直观展示了同一张桥梁图像在依次加入 `+MP-BS` (`A1`)、`+WD-SAF` (`A2`)、`+AGDS-WGD` (`A3`) 和 `+CW-Loss & Scorer` (`A4`) 时异常响应图的逐步演进过程：
+![五阶段独立训练消融定量对比图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig4_true_ablation_quantitative_charts.png)
 
-![五阶段消融视觉演进图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig3_ablation_visual_progression.png)
-
----
-
-### 4.3 递进式消融定量图表与训练收敛/跨域泛化曲线图
-
-````carousel
-![五阶段消融实验定量对比图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig4_ablation_quantitative_charts.png)
-<!-- slide -->
-![训练收敛轨迹与跨域零样本泛化对比图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig5_overall_comparison_and_curves.png)
-````
+![五阶段独立训练消融视觉演进图](C:\Users\z1413\.gemini\antigravity\brain\2ec3d56c-32ae-4b6a-9159-439069f92dcb\fig3_true_ablation_visual_progression.png)

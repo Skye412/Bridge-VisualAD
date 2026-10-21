@@ -36,7 +36,7 @@ from bridge_modules import (
     compute_edge_consistency_loss,
 )
 from run_experiments import fast_aupro, setup_seed, _make_balanced_smoke_subset
-from train_aligned_a4 import eval_metrics_from_amap_and_sp, norm01, topk_pool_np
+from eval_bridge_metrics_common import eval_metrics_from_amap_and_sp, norm01, topk_pool_np
 
 
 class Scratch8EpA4Wrapper(nn.Module):

@@ -1,0 +1,13 @@
+[2026-10-20 21:25:23] === Starting 8-Epoch From-Scratch Controlled Factorial Variant: a3_plus_cw_8ep | train_ds=Bridge512_balance_S2DS ===
+[2026-10-20 21:25:33] Trainable parameters (a3_plus_cw_8ep): 36,858,312
+[2026-10-20 21:29:33] Epoch [1/8] loss=4.5288 | Val I-AUROC=95.70 P-AUROC=94.41 P-F1=71.68 P-AP=72.57 (score=83.59)
+[2026-10-20 21:33:33] Epoch [2/8] loss=3.9930 | Val I-AUROC=96.72 P-AUROC=97.30 P-F1=82.62 P-AP=83.95 (score=90.15)
+[2026-10-20 21:37:32] Epoch [3/8] loss=3.7641 | Val I-AUROC=96.15 P-AUROC=97.84 P-F1=84.64 P-AP=87.88 (score=91.63)
+[2026-10-20 21:41:33] Epoch [4/8] loss=3.5441 | Val I-AUROC=96.49 P-AUROC=98.38 P-F1=87.20 P-AP=90.97 (score=93.26)
+[2026-10-20 21:45:33] Epoch [5/8] loss=3.3156 | Val I-AUROC=97.33 P-AUROC=98.48 P-F1=87.17 P-AP=92.66 (score=93.91)
+[2026-10-20 21:49:34] Epoch [6/8] loss=3.0892 | Val I-AUROC=96.45 P-AUROC=98.84 P-F1=89.20 P-AP=94.06 (score=94.64)
+[2026-10-20 21:53:34] Epoch [7/8] loss=2.8996 | Val I-AUROC=96.98 P-AUROC=98.79 P-F1=88.51 P-AP=94.10 (score=94.59)
+[2026-10-20 21:57:33] Epoch [8/8] loss=2.7437 | Val I-AUROC=96.47 P-AUROC=98.81 P-F1=89.16 P-AP=94.31 (score=94.69)
+[2026-10-20 21:57:35] Loaded best validation checkpoint (Epoch 8) from /home/skye/data/Skye/visualad/outputs/a3_plus_cw_8ep_S2DS/best_model.pth for final Test evaluation...
+[2026-10-20 21:58:23] [In-Domain Test: Bridge512_balance_S2DS] {"Image-AUROC": 93.86, "Image-F1": 95.92, "Image-AP": 98.53, "Pixel-AUROC": 98.59, "Pixel-F1": 84.41, "Pixel-AP": 90.2, "Pixel-AUPRO": 78.44, "Pixel-IoU": 73.02, "Mean-Score": 91.42, "Best-Th": 0.37, "Per-Class": {"Crack_Recall": 72.35, "Spalling_Recall": 93.19, "Corrosion_Recall": 84.38, "Efflorescence_Recall": 53.79}, "Mean-5": 89.1}
+[2026-10-20 21:59:47] [Cross-Domain Zero-Shot Test: Bridge512_balance_S2DS -> Bridge512_balance_CODEBRIM] {"Image-AUROC": 82.91, "Image-F1": 67.91, "Image-AP": 65.37, "Pixel-AUROC": 89.69, "Pixel-F1": 49.29, "Pixel-AP": 52.31, "Pixel-AUPRO": 70.65, "Pixel-IoU": 32.71, "Mean-Score": 68.3, "Best-Th": 0.25, "Per-Class": {"Crack_Recall": 48.3, "Spalling_Recall": 73.96, "Corrosion_Recall": 95.79, "Efflorescence_Recall": 7.03}, "Mean-5": 68.97}

@@ -20,7 +20,8 @@
       "Spalling_Recall": 78.4,
       "Corrosion_Recall": 97.21,
       "Efflorescence_Recall": 57.06
-    }
+    },
+    "Mean-5": 79.52
   },
   "cross_domain_test_dataset": "Bridge512_balance_S2DS",
   "cross_domain_test": {
@@ -38,7 +39,8 @@
       "Spalling_Recall": 83.09,
       "Corrosion_Recall": 81.11,
       "Efflorescence_Recall": 73.53
-    }
+    },
+    "Mean-5": 73.54
   },
   "history": [
     {

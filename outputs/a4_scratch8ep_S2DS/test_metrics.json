@@ -21,7 +21,8 @@
       "Spalling_Recall": 93.82,
       "Corrosion_Recall": 86.19,
       "Efflorescence_Recall": 59.03
-    }
+    },
+    "Mean-5": 89.21
   },
   "cross_domain_test_dataset": "Bridge512_balance_CODEBRIM",
   "cross_domain_test": {
@@ -33,14 +34,15 @@
     "Pixel-AP": 52.85,
     "Pixel-AUPRO": 67.91,
     "Pixel-IoU": 33.33,
-    "Mean-Score": 67.98,
+    "Mean-Score": 67.97,
     "Best-Th": 0.16,
     "Per-Class": {
       "Crack_Recall": 64.61,
       "Spalling_Recall": 81.31,
       "Corrosion_Recall": 96.38,
       "Efflorescence_Recall": 18.23
-    }
+    },
+    "Mean-5": 68.78
   },
   "history": [
     {

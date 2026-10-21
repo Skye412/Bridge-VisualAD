@@ -1,0 +1,46 @@
+{
+  "method": "Dinomaly (CVPR 2025)",
+  "variant": "comp_dinomaly",
+  "train_dataset": "Bridge512_balance_S2DS",
+  "trainable_params": 61425408,
+  "checkpoint_path": "/home/skye/data/Skye/Dinomaly/runs/s2ds512-v0-b16-s1-review20261018/best_val.pth",
+  "in_domain_test": {
+    "Image-AUROC": 66.76,
+    "Image-F1": 91.22,
+    "Image-AP": 89.82,
+    "Pixel-AUROC": 88.37,
+    "Pixel-F1": 51.06,
+    "Pixel-AP": 40.13,
+    "Pixel-AUPRO": 18.58,
+    "Pixel-IoU": 34.29,
+    "Mean-Score": 63.71,
+    "Best-Th": 0.27,
+    "Per-Class": {
+      "Crack_Recall": 26.43,
+      "Spalling_Recall": 67.72,
+      "Corrosion_Recall": 89.62,
+      "Efflorescence_Recall": 47.24
+    },
+    "Mean-5": 52.98
+  },
+  "cross_domain_test_dataset": "Bridge512_balance_CODEBRIM",
+  "cross_domain_test": {
+    "Image-AUROC": 71.9,
+    "Image-F1": 58.48,
+    "Image-AP": 46.25,
+    "Pixel-AUROC": 79.67,
+    "Pixel-F1": 35.45,
+    "Pixel-AP": 23.26,
+    "Pixel-AUPRO": 38.61,
+    "Pixel-IoU": 21.55,
+    "Mean-Score": 50.52,
+    "Best-Th": 0.22,
+    "Per-Class": {
+      "Crack_Recall": 60.45,
+      "Spalling_Recall": 71.78,
+      "Corrosion_Recall": 96.12,
+      "Efflorescence_Recall": 37.97
+    },
+    "Mean-5": 49.78
+  }
+}

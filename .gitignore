@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 VisualAD.zip
 *.pth
+outputs/comp_mixercseg_queue.log

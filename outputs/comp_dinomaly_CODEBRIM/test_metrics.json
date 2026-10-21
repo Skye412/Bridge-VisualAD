@@ -1,0 +1,46 @@
+{
+  "method": "Dinomaly (CVPR 2025)",
+  "variant": "comp_dinomaly",
+  "train_dataset": "Bridge512_balance_CODEBRIM",
+  "trainable_params": 61425408,
+  "checkpoint_path": "/home/skye/data/Skye/Dinomaly/runs/codebrim512-v0-b16-s1-review20261018/best_val.pth",
+  "in_domain_test": {
+    "Image-AUROC": 81.01,
+    "Image-F1": 66.38,
+    "Image-AP": 54.93,
+    "Pixel-AUROC": 83.55,
+    "Pixel-F1": 39.84,
+    "Pixel-AP": 27.94,
+    "Pixel-AUPRO": 37.21,
+    "Pixel-IoU": 24.87,
+    "Mean-Score": 55.84,
+    "Best-Th": 0.15,
+    "Per-Class": {
+      "Crack_Recall": 71.29,
+      "Spalling_Recall": 68.98,
+      "Corrosion_Recall": 94.19,
+      "Efflorescence_Recall": 50.95
+    },
+    "Mean-5": 53.91
+  },
+  "cross_domain_test_dataset": "Bridge512_balance_S2DS",
+  "cross_domain_test": {
+    "Image-AUROC": 61.97,
+    "Image-F1": 91.11,
+    "Image-AP": 87.82,
+    "Pixel-AUROC": 81.04,
+    "Pixel-F1": 40.1,
+    "Pixel-AP": 27.75,
+    "Pixel-AUPRO": 13.35,
+    "Pixel-IoU": 25.08,
+    "Mean-Score": 57.59,
+    "Best-Th": 0.2,
+    "Per-Class": {
+      "Crack_Recall": 29.68,
+      "Spalling_Recall": 59.01,
+      "Corrosion_Recall": 86.35,
+      "Efflorescence_Recall": 61.4
+    },
+    "Mean-5": 44.84
+  }
+}

@@ -1,0 +1,4 @@
+[2026-10-21 10:47:53] === MixerCSeg (Bridge512_balance_CODEBRIM, Official 50 Ep) | Trainable params: 2541882 ===
+[2026-10-21 12:14:40] Epoch [4/50] loss=0.3209 | Val I-AUROC=63.33 P-AUROC=87.82 P-F1=39.14 P-AP=26.74
+[2026-10-21 12:58:30] Epoch [6/50] loss=0.3037 | Val I-AUROC=61.78 P-AUROC=88.21 P-F1=39.33 P-AP=27.54
+[2026-10-21 13:41:57] Epoch [8/50] loss=0.2956 | Val I-AUROC=66.37 P-AUROC=86.72 P-F1=39.32 P-AP=26.03

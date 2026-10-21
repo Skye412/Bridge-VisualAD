@@ -6,41 +6,43 @@
   "accum_steps": 2,
   "trainable_params": 36858459,
   "in_domain_test": {
-    "Image-AUROC": 92.84,
-    "Image-F1": 77.36,
-    "Image-AP": 86.37,
-    "Pixel-AUROC": 95.35,
-    "Pixel-F1": 67.43,
-    "Pixel-AP": 73.83,
-    "Pixel-AUPRO": 83.57,
-    "Pixel-IoU": 50.86,
-    "Mean-Score": 82.39,
-    "Best-Th": 0.36,
+    "Image-AUROC": 93.22,
+    "Image-F1": 78.53,
+    "Image-AP": 87.74,
+    "Pixel-AUROC": 95.71,
+    "Pixel-F1": 69.77,
+    "Pixel-AP": 76.71,
+    "Pixel-AUPRO": 81.5,
+    "Pixel-IoU": 53.57,
+    "Mean-Score": 83.31,
+    "Best-Th": 0.34,
     "Per-Class": {
-      "Crack_Recall": 65.1,
-      "Spalling_Recall": 75.94,
-      "Corrosion_Recall": 97.3,
-      "Efflorescence_Recall": 57.73
-    }
+      "Crack_Recall": 63.13,
+      "Spalling_Recall": 77.01,
+      "Corrosion_Recall": 95.38,
+      "Efflorescence_Recall": 57.36
+    },
+    "Mean-5": 83.38
   },
   "cross_domain_test_dataset": "Bridge512_balance_S2DS",
   "cross_domain_test": {
-    "Image-AUROC": 86.85,
-    "Image-F1": 93.47,
-    "Image-AP": 96.39,
-    "Pixel-AUROC": 96.17,
-    "Pixel-F1": 70.97,
-    "Pixel-AP": 72.12,
-    "Pixel-AUPRO": 65.76,
-    "Pixel-IoU": 55.0,
-    "Mean-Score": 83.1,
-    "Best-Th": 0.4,
+    "Image-AUROC": 89.3,
+    "Image-F1": 94.07,
+    "Image-AP": 97.27,
+    "Pixel-AUROC": 97.08,
+    "Pixel-F1": 74.54,
+    "Pixel-AP": 76.77,
+    "Pixel-AUPRO": 67.08,
+    "Pixel-IoU": 59.42,
+    "Mean-Score": 85.16,
+    "Best-Th": 0.33,
     "Per-Class": {
-      "Crack_Recall": 79.05,
-      "Spalling_Recall": 80.56,
-      "Corrosion_Recall": 80.06,
-      "Efflorescence_Recall": 78.43
-    }
+      "Crack_Recall": 85.8,
+      "Spalling_Recall": 85.18,
+      "Corrosion_Recall": 81.49,
+      "Efflorescence_Recall": 79.11
+    },
+    "Mean-5": 80.95
   },
   "history": [
     {

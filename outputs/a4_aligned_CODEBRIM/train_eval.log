@@ -1,5 +1,0 @@
-[2026-10-19 13:29:15] === Training Aligned A4 (CW-Loss + DynamicAreaScorer) on Bridge512_balance_CODEBRIM ===
-[2026-10-19 13:31:49] Aligned A4 (CODEBRIM) CW-Loss + Scorer fine-tuning loss=0.6989
-[2026-10-19 13:35:25] [Aligned A4 In-Domain: Bridge512_balance_CODEBRIM] {"Image-AUROC": 93.63, "Image-F1": 79.39, "Image-AP": 88.56, "Pixel-AUROC": 96.09, "Pixel-F1": 69.32, "Pixel-AP": 77.42, "Pixel-AUPRO": 80.4, "Pixel-IoU": 53.05, "Mean-Score": 83.54, "Best-Th": 0.5, "Per-Class": {"Crack_Recall": 49.18, "Spalling_Recall": 75.92, "Corrosion_Recall": 87.4, "Efflorescence_Recall": 55.53}}
-[2026-10-19 13:37:25] [Aligned A4 Cross-Domain: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 84.01, "Image-F1": 93.19, "Image-AP": 95.69, "Pixel-AUROC": 95.97, "Pixel-F1": 71.7, "Pixel-AP": 70.48, "Pixel-AUPRO": 51.3, "Pixel-IoU": 55.88, "Mean-Score": 80.33, "Best-Th": 0.56, "Per-Class": {"Crack_Recall": 52.8, "Spalling_Recall": 84.06, "Corrosion_Recall": 80.14, "Efflorescence_Recall": 85.57}}
-[2026-10-19 13:54:40] Found trained /data/Skye/visualad/outputs/a4_aligned_CODEBRIM/best_model.pth, loading directly for evaluation...

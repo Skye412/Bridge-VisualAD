@@ -1,0 +1,20 @@
+[2026-10-20 19:19:44] === AdaptCLIP (Bridge512_balance_CODEBRIM, Official 15 Ep) | Trainable params: 609024 ===
+[2026-10-20 19:27:53] Epoch [1/15] loss=3.0814 | Val I-AUROC=86.38 P-AUROC=93.37 P-F1=51.63 P-AP=48.27
+[2026-10-20 19:30:07] Epoch [2/15] loss=2.8427 | Val I-AUROC=87.75 P-AUROC=96.18 P-F1=60.56 P-AP=54.91
+[2026-10-20 19:32:10] Epoch [3/15] loss=2.7595 | Val I-AUROC=89.33 P-AUROC=94.31 P-F1=55.04 P-AP=52.06
+[2026-10-20 19:34:18] Epoch [4/15] loss=2.6967 | Val I-AUROC=88.43 P-AUROC=94.80 P-F1=58.11 P-AP=55.35
+[2026-10-20 19:36:31] Epoch [5/15] loss=2.6680 | Val I-AUROC=89.46 P-AUROC=95.97 P-F1=61.67 P-AP=61.54
+[2026-10-20 19:38:46] Epoch [6/15] loss=2.6318 | Val I-AUROC=89.86 P-AUROC=96.26 P-F1=62.67 P-AP=58.33
+[2026-10-20 19:40:56] Epoch [7/15] loss=2.6186 | Val I-AUROC=89.68 P-AUROC=95.44 P-F1=62.46 P-AP=60.90
+[2026-10-20 19:43:21] Epoch [8/15] loss=2.5838 | Val I-AUROC=88.68 P-AUROC=96.52 P-F1=64.75 P-AP=59.29
+[2026-10-20 19:45:40] Epoch [9/15] loss=2.5793 | Val I-AUROC=90.28 P-AUROC=96.52 P-F1=65.48 P-AP=60.99
+[2026-10-20 19:47:52] Epoch [10/15] loss=2.5617 | Val I-AUROC=89.90 P-AUROC=96.56 P-F1=64.82 P-AP=60.92
+[2026-10-20 19:50:04] Epoch [11/15] loss=2.5483 | Val I-AUROC=90.27 P-AUROC=94.73 P-F1=61.37 P-AP=57.28
+[2026-10-20 19:52:15] Epoch [12/15] loss=2.5465 | Val I-AUROC=90.79 P-AUROC=96.68 P-F1=67.16 P-AP=62.35
+[2026-10-20 19:54:22] Epoch [13/15] loss=2.5387 | Val I-AUROC=89.44 P-AUROC=95.88 P-F1=65.55 P-AP=62.94
+[2026-10-20 19:56:28] Epoch [14/15] loss=2.5204 | Val I-AUROC=90.90 P-AUROC=96.28 P-F1=64.82 P-AP=58.43
+[2026-10-20 19:58:33] Epoch [15/15] loss=2.5107 | Val I-AUROC=91.13 P-AUROC=97.17 P-F1=70.20 P-AP=67.80
+[2026-10-20 20:01:03] [AdaptCLIP (8Ep) In-Domain Bridge512_balance_CODEBRIM] {"Image-AUROC": 92.02, "Image-F1": 76.05, "Image-AP": 84.52, "Pixel-AUROC": 95.4, "Pixel-F1": 67.76, "Pixel-AP": 73.03, "Pixel-AUPRO": 80.41, "Pixel-IoU": 51.24, "Mean-Score": 81.72, "Best-Th": 0.44, "Per-Class": {"Crack_Recall": 55.94, "Spalling_Recall": 77.12, "Corrosion_Recall": 95.36, "Efflorescence_Recall": 49.54}}
+[2026-10-20 20:01:03] [AdaptCLIP (8Ep) Cross-Domain Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 81.8, "Image-F1": 92.17, "Image-AP": 95.41, "Pixel-AUROC": 95.4, "Pixel-F1": 69.61, "Pixel-AP": 65.27, "Pixel-AUPRO": 54.43, "Pixel-IoU": 53.39, "Mean-Score": 73.3, "Best-Th": 0.48, "Per-Class": {"Crack_Recall": 66.62, "Spalling_Recall": 82.05, "Corrosion_Recall": 76.2, "Efflorescence_Recall": 82.72}}
+[2026-10-20 20:02:37] [AdaptCLIP (Official 15Ep) In-Domain Bridge512_balance_CODEBRIM] {"Image-AUROC": 92.51, "Image-F1": 76.67, "Image-AP": 86.62, "Pixel-AUROC": 95.69, "Pixel-F1": 69.01, "Pixel-AP": 74.81, "Pixel-AUPRO": 77.68, "Pixel-IoU": 52.68, "Mean-Score": 81.94, "Best-Th": 0.31, "Per-Class": {"Crack_Recall": 60.25, "Spalling_Recall": 74.88, "Corrosion_Recall": 92.43, "Efflorescence_Recall": 58.15}}
+[2026-10-20 20:03:31] [AdaptCLIP (Official 15Ep) Cross-Domain Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 78.59, "Image-F1": 91.9, "Image-AP": 94.48, "Pixel-AUROC": 94.58, "Pixel-F1": 65.83, "Pixel-AP": 66.63, "Pixel-AUPRO": 48.59, "Pixel-IoU": 49.07, "Mean-Score": 70.84, "Best-Th": 0.33, "Per-Class": {"Crack_Recall": 51.73, "Spalling_Recall": 74.12, "Corrosion_Recall": 66.85, "Efflorescence_Recall": 82.63}}
