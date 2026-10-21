@@ -1,0 +1,13 @@
+[2026-10-21 18:38:50] === Starting 8-Epoch From-Scratch Aligned A4: train_ds=Bridge512_balance_CODEBRIM ===
+[2026-10-21 18:39:00] Trainable parameters (a4_scratch8ep): 36,858,459
+[2026-10-21 18:46:26] Epoch [1/8] loss=4.5221 | Val I-AUROC=90.92 P-AUROC=95.40 P-F1=56.07 P-AP=57.84
+[2026-10-21 18:53:49] Epoch [2/8] loss=4.0803 | Val I-AUROC=91.55 P-AUROC=95.35 P-F1=57.73 P-AP=61.06
+[2026-10-21 19:01:19] Epoch [3/8] loss=3.9094 | Val I-AUROC=90.42 P-AUROC=96.98 P-F1=65.59 P-AP=70.37
+[2026-10-21 19:08:56] Epoch [4/8] loss=3.7537 | Val I-AUROC=92.41 P-AUROC=97.24 P-F1=68.08 P-AP=73.56
+[2026-10-21 19:16:18] Epoch [5/8] loss=3.5598 | Val I-AUROC=91.30 P-AUROC=96.86 P-F1=65.81 P-AP=71.54
+[2026-10-21 19:23:39] Epoch [6/8] loss=3.4618 | Val I-AUROC=92.36 P-AUROC=97.92 P-F1=72.69 P-AP=78.53
+[2026-10-21 19:31:02] Epoch [7/8] loss=3.3733 | Val I-AUROC=93.17 P-AUROC=98.43 P-F1=78.63 P-AP=83.59
+[2026-10-21 19:38:25] Epoch [8/8] loss=3.3114 | Val I-AUROC=92.46 P-AUROC=98.25 P-F1=77.28 P-AP=81.77
+[2026-10-21 19:38:26] Loaded best validation checkpoint (Epoch 7, val4=88.4550) from /home/skye/data/Skye/visualad/outputs/a4_scratch8ep_CODEBRIM/best_model.pth for final Test evaluation...
+[2026-10-21 19:40:12] [In-Domain Test: Bridge512_balance_CODEBRIM] {"Image-AUROC": 92.59, "Image-F1": 77.5, "Image-AP": 86.19, "Pixel-AUROC": 95.75, "Pixel-F1": 69.68, "Pixel-AP": 76.39, "Pixel-AUPRO": 79.36, "Pixel-IoU": 53.47, "Mean-Score": 82.5, "Mean-5": 82.76, "Best-Th": 0.31, "Per-Class": {"Crack_Recall": 60.27, "Spalling_Recall": 73.09, "Corrosion_Recall": 96.07, "Efflorescence_Recall": 66.71}}
+[2026-10-21 19:41:03] [Cross-Domain Zero-Shot Test: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 86.96, "Image-F1": 93.09, "Image-AP": 96.49, "Pixel-AUROC": 97.22, "Pixel-F1": 75.33, "Pixel-AP": 78.49, "Pixel-AUPRO": 59.51, "Pixel-IoU": 60.42, "Mean-Score": 83.87, "Mean-5": 79.5, "Best-Th": 0.34, "Per-Class": {"Crack_Recall": 71.43, "Spalling_Recall": 85.37, "Corrosion_Recall": 81.32, "Efflorescence_Recall": 75.29}}
