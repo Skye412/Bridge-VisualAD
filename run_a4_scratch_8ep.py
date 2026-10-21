@@ -357,6 +357,7 @@ def train_scratch_8ep_a4(
     in_mode = f"{short_ds}_in"
     cross_mode = f"{short_ds}_cross"
     best_val_score = -1.0
+    best_epoch = -1
     best_ckpt_path = os.path.join(save_dir, "best_model.pth")
     history = []
 
@@ -429,15 +430,17 @@ def train_scratch_8ep_a4(
         )
         history.append({"epoch": epoch + 1, "train_loss": round(mean_train_loss, 4), "val": val_metrics})
 
-        if (epoch + 1) > (epochs // 2) and val_key_score >= best_val_score:
+        torch.save(wrapper.get_trainable_state_dict(), os.path.join(save_dir, f"epoch_{epoch + 1}.pth"))
+        if val_key_score >= best_val_score:
             best_val_score = val_key_score
+            best_epoch = epoch + 1
             torch.save(wrapper.get_trainable_state_dict(), best_ckpt_path)
 
     final_ckpt_path = os.path.join(save_dir, "final_model.pth")
     torch.save(wrapper.get_trainable_state_dict(), final_ckpt_path)
 
     wrapper.load_trainable_state_dict(torch.load(best_ckpt_path, map_location=device), device)
-    log_print(f"Loaded best validation checkpoint from {best_ckpt_path} for final Test evaluation...")
+    log_print(f"Loaded best validation checkpoint (Epoch {best_epoch}, val4={best_val_score:.4f}) from {best_ckpt_path} for final Test evaluation...")
 
     in_domain_test_metrics = evaluate_scratch_a4(wrapper, test_loader, device, ds_mode=in_mode, compute_pro=True)
     log_print(f"[In-Domain Test: {dataset_name}] {json.dumps(in_domain_test_metrics)}")
@@ -471,6 +474,10 @@ def train_scratch_8ep_a4(
         "cross_domain_test_dataset": other_ds_name,
         "cross_domain_test": cross_domain_test_metrics,
         "history": history,
+        "selection_rule": "max over all epochs of (Val I-AUROC + P-AUROC + P-F1 + P-AP)/4, ties -> later epoch",
+        "selected_val_epoch": best_epoch,
+        "val_best_th": history[best_epoch - 1]["val"].get("Best-Th"),
+        "best_ckpt_sha256": __import__("hashlib").sha256(open(best_ckpt_path, "rb").read()).hexdigest(),
     }
     with open(os.path.join(save_dir, "test_metrics.json"), "w", encoding="utf-8") as mf:
         json.dump(summary, mf, indent=2)

@@ -1,0 +1,40 @@
+{
+  "note": "Independent re-evaluation of run-1 Epoch-8 weights (final_model.pth), performed 2026-10-21 17:23-17:26 JST with evaluate_scratch_a4. Run-1 original selection (val 4-metric rule) chose Epoch 4 (SHA256 909187c6a35156cd...), whose weights were overwritten on 2026-10-21 and are lost; Epoch-4 test results survive only in train_eval.log.",
+  "ckpt_sha256": "2f8d16f83a05417f6fc84a5b9ce9df41e470c914a6d637a0be5186430fd8f526",
+  "in_domain_test": {
+    "Image-AUROC": 93.23,
+    "Image-F1": 78.53,
+    "Image-AP": 87.75,
+    "Pixel-AUROC": 95.71,
+    "Pixel-F1": 69.78,
+    "Pixel-AP": 76.72,
+    "Pixel-AUPRO": 81.51,
+    "Pixel-IoU": 53.58,
+    "Mean-Score": 83.32,
+    "Best-Th": 0.34,
+    "Per-Class": {
+      "Crack_Recall": 63.12,
+      "Spalling_Recall": 77.01,
+      "Corrosion_Recall": 95.38,
+      "Efflorescence_Recall": 57.38
+    }
+  },
+  "cross_domain_test": {
+    "Image-AUROC": 89.31,
+    "Image-F1": 94.07,
+    "Image-AP": 97.27,
+    "Pixel-AUROC": 97.08,
+    "Pixel-F1": 74.54,
+    "Pixel-AP": 76.77,
+    "Pixel-AUPRO": 67.07,
+    "Pixel-IoU": 59.42,
+    "Mean-Score": 85.16,
+    "Best-Th": 0.33,
+    "Per-Class": {
+      "Crack_Recall": 85.8,
+      "Spalling_Recall": 85.16,
+      "Corrosion_Recall": 81.46,
+      "Efflorescence_Recall": 79.1
+    }
+  }
+}

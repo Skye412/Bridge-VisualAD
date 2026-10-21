@@ -582,7 +582,7 @@ def run_single_experiment(args):
         )
         history.append({"epoch": epoch + 1, "train_loss": round(mean_train_loss, 4), "val": val_metrics})
 
-        if (epoch + 1) > (args.epochs // 2) and val_key_score >= best_val_score:
+        if val_key_score >= best_val_score:
             best_val_score = val_key_score
             torch.save(wrapper.get_trainable_state_dict(), best_ckpt_path)
 
