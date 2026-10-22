@@ -1,0 +1,14 @@
+[2026-10-22 00:40:22] === Starting True Standalone Ablation: variant=a3_agds_wgd | train_ds=Bridge512_balance_CODEBRIM ===
+[2026-10-22 00:40:32] Trainable parameters (a3_agds_wgd): 36,858,312
+[2026-10-22 00:47:45] Epoch [1/8] loss=4.3204 | Val I-AUROC=90.58 P-AUROC=93.87 P-F1=51.49 P-AP=52.94
+[2026-10-22 00:54:54] Epoch [2/8] loss=3.8748 | Val I-AUROC=92.01 P-AUROC=97.32 P-F1=66.39 P-AP=71.29
+[2026-10-22 01:02:04] Epoch [3/8] loss=3.7239 | Val I-AUROC=93.01 P-AUROC=97.43 P-F1=68.87 P-AP=74.27
+[2026-10-22 01:09:14] Epoch [4/8] loss=3.5778 | Val I-AUROC=92.39 P-AUROC=97.81 P-F1=71.07 P-AP=74.32
+[2026-10-22 01:16:24] Epoch [5/8] loss=3.4704 | Val I-AUROC=92.04 P-AUROC=97.43 P-F1=69.93 P-AP=76.13
+[2026-10-22 01:23:32] Epoch [6/8] loss=3.3699 | Val I-AUROC=92.08 P-AUROC=98.39 P-F1=76.30 P-AP=80.24
+[2026-10-22 01:30:42] Epoch [7/8] loss=3.2986 | Val I-AUROC=92.88 P-AUROC=97.74 P-F1=71.99 P-AP=78.35
+[2026-10-22 01:37:50] Epoch [8/8] loss=3.1987 | Val I-AUROC=91.58 P-AUROC=98.06 P-F1=73.61 P-AP=75.96
+[2026-10-22 01:37:50] Loaded best validation checkpoint from /home/skye/data/Skye/visualad/outputs/seeds/a3_agds_wgd_CODEBRIM_seed333/best_model.pth for final Test evaluation...
+[2026-10-22 01:41:14] [In-Domain Test: Bridge512_balance_CODEBRIM] {"Image-AUROC": 92.45, "Image-F1": 77.48, "Image-AP": 87.26, "Pixel-AUROC": 96.22, "Pixel-F1": 70.9, "Pixel-AP": 77.97, "Pixel-AUPRO": 79.93, "Pixel-IoU": 54.92, "Mean-Score": 83.17, "Best-Th": 0.42, "Per-Class": {"Crack_Recall": 50.44, "Spalling_Recall": 74.26, "Corrosion_Recall": 95.96, "Efflorescence_Recall": 54.54}}
+[2026-10-22 01:41:57] [Cross-Domain Zero-Shot Test: Bridge512_balance_CODEBRIM -> Bridge512_balance_S2DS] {"Image-AUROC": 85.05, "Image-F1": 92.44, "Image-AP": 96.37, "Pixel-AUROC": 97.0, "Pixel-F1": 75.49, "Pixel-AP": 77.19, "Pixel-AUPRO": 54.92, "Pixel-IoU": 60.64, "Mean-Score": 82.64, "Best-Th": 0.46, "Per-Class": {"Crack_Recall": 52.5, "Spalling_Recall": 85.17, "Corrosion_Recall": 75.1, "Efflorescence_Recall": 81.62}}
+[2026-10-22 01:41:57] Saved complete results to /home/skye/data/Skye/visualad/outputs/seeds/a3_agds_wgd_CODEBRIM_seed333/test_metrics.json

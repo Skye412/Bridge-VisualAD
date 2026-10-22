@@ -184,8 +184,12 @@ def build_all_verified_tables():
         md_lines.append("## Part V: Third-Domain Zero-Shot Transfer (`DACL10k-v3 validation`, 975 Images, All 13 Bridge Damages)")
         md_lines.append("")
         dacl_order = [
-            ("comp_wpformer", "WPFormer (CVPR 2025)"),
+            ("comp_dinomaly", "Dinomaly (CVPR 2025)"),
+            ("comp_anomalyclip", "AnomalyCLIP (ICLR 2024)"),
+            ("comp_bayespfl", "Bayes-PFL (CVPR 2025)"),
             ("comp_adaptclip", "AdaptCLIP (AAAI 2026)"),
+            ("comp_wpformer", "WPFormer (CVPR 2025)"),
+            ("comp_mixercseg", "MixerCSeg (CVPR 2026)"),
             ("baseline", "A0 (VisualAD Baseline)"),
             ("a1_mp_bs", "A1 (+MP-BS)"),
             ("a2_wd_saf", "A2 (+MP-BS +WD-SAF)"),

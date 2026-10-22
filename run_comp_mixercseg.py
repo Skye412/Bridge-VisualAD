@@ -211,10 +211,14 @@ def train_and_eval_mixercseg(dataset_name, short_ds, epochs=50, batch_size=4, lr
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--only_dataset", type=str, default=None, choices=["S2DS", "CODEBRIM"])
     parser.add_argument("--smoke_test", action="store_true")
     args = parser.parse_args()
     ep = 1 if args.smoke_test else args.epochs
-    for s_ds, full_ds in [("S2DS", "Bridge512_balance_S2DS"), ("CODEBRIM", "Bridge512_balance_CODEBRIM")]:
+    pairs = [("S2DS", "Bridge512_balance_S2DS"), ("CODEBRIM", "Bridge512_balance_CODEBRIM")]
+    if args.only_dataset:
+        pairs = [p for p in pairs if p[0] == args.only_dataset]
+    for s_ds, full_ds in pairs:
         train_and_eval_mixercseg(full_ds, s_ds, epochs=ep, smoke_test=args.smoke_test)
     if not args.smoke_test:
         from run_all_comparisons import aggregate_comparison_metrics

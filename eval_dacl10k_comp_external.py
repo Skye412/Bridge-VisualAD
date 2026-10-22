@@ -475,9 +475,299 @@ def infer_wpformer_on_dacl(short_ds, device):
     return amaps_norm, final_sp, source_th
 
 
+@torch.no_grad()
+def infer_dinomaly_on_dacl(short_ds, device):
+    DINOMALY_DIR = "/home/skye/data/Skye/Dinomaly"
+    if DINOMALY_DIR not in sys.path:
+        sys.path.insert(0, DINOMALY_DIR)
+    from dinomaly_bridge import build_model
+    from utils import cal_anomaly_maps
+    from eval_comp_dinomaly import get_dinomaly_preprocess
+
+    preprocess = get_dinomaly_preprocess(392)
+    dataset = DACL10kCustomValDataset(preprocess)
+    loader = data.DataLoader(dataset, batch_size=8, shuffle=False, num_workers=2, pin_memory=True)
+
+    ckpt_dir = os.path.join(CUR_DIR, "outputs", f"comp_dinomaly_{short_ds}")
+    with open(os.path.join(ckpt_dir, "test_metrics.json"), "r", encoding="utf-8") as f:
+        src_meta = json.load(f)
+    source_th = float(src_meta.get("val_best_th", src_meta["in_domain_test"].get("Best-Th", 0.35)))
+    ckpt_path = src_meta["checkpoint_path"]
+
+    model, _ = build_model(device, variant="v0")
+    ckpt = torch.load(ckpt_path, map_location=device)
+    model.load_state_dict(ckpt["model"])
+    del ckpt
+    model.eval()
+
+    pr_sp_list, amaps_list = [], []
+    for items in tqdm(loader, desc=f"Dinomaly_{short_ds}->DACL", leave=False):
+        img = items["img"].to(device)
+        en, de = model(img)
+        amap, _ = cal_anomaly_maps(en, de, 518)
+        amap_np = amap[:, 0].float().cpu().numpy()
+        for b in range(img.shape[0]):
+            smooth_m = gaussian_filter(amap_np[b], sigma=4.0)
+            flat_m = smooth_m.reshape(-1)
+            k_top = max(1, int(np.ceil(flat_m.size * 0.01)))
+            sp_val = float(np.sort(flat_m)[-k_top:].mean())
+            amaps_list.append(smooth_m.astype(np.float16))
+            pr_sp_list.append(sp_val)
+
+    amaps_norm = norm01(np.stack(amaps_list, axis=0).astype(np.float32))
+    amaps_list.clear()
+    final_sp = np.array(pr_sp_list, dtype=np.float32)
+    return amaps_norm, final_sp, source_th
+
+
+@torch.no_grad()
+def infer_anomalyclip_on_dacl(short_ds, device):
+    ANOMALYCLIP_DIR = "/home/skye/data/Skye/third_party/AnomalyCLIP"
+    if ANOMALYCLIP_DIR not in sys.path:
+        sys.path.insert(0, ANOMALYCLIP_DIR)
+    try:
+        import thop
+    except ImportError:
+        import types
+        _thop = types.ModuleType("thop")
+        _thop.profile = lambda *a, **kw: (0, 0)
+        sys.modules["thop"] = _thop
+    import AnomalyCLIP_lib
+    from prompt_ensemble import AnomalyCLIP_PromptLearner
+    from utils import get_transform
+
+    image_size = 518
+    features_list = [6, 12, 18, 24]
+    preprocess, _ = get_transform(argparse.Namespace(image_size=image_size))
+    dataset = DACL10kCustomValDataset(preprocess)
+    loader = data.DataLoader(dataset, batch_size=16, shuffle=False, num_workers=4, pin_memory=True)
+
+    ckpt_dir = os.path.join(CUR_DIR, "outputs", f"comp_anomalyclip_{short_ds}")
+    with open(os.path.join(ckpt_dir, "test_metrics.json"), "r", encoding="utf-8") as f:
+        src_meta = json.load(f)
+    source_th = float(src_meta.get("val_best_th", src_meta["in_domain_test"].get("Best-Th", 0.35)))
+
+    AnomalyCLIP_parameters = {"Prompt_length": 12, "learnabel_text_embedding_depth": 9, "learnabel_text_embedding_length": 4}
+    model, _ = AnomalyCLIP_lib.load(
+        "ViT-L/14@336px",
+        device=device,
+        design_details=AnomalyCLIP_parameters,
+        download_root="/home/skye/data/Skye/Bayes-PFL-main/pretrained_weight",
+    )
+    model.eval()
+    prompt_learner = AnomalyCLIP_PromptLearner(model.to("cpu"), AnomalyCLIP_parameters)
+    prompt_learner.to(device)
+    model.to(device)
+    model.visual.DAPM_replace(DPAM_layer=20)
+
+    ckpt = torch.load(os.path.join(ckpt_dir, "best_model.pth"), map_location=device)
+    prompt_learner.load_state_dict(ckpt["prompt_learner"])
+    prompt_learner.eval()
+
+    prompts, tokenized_prompts, compound_prompts_text = prompt_learner(cls_id=None)
+    text_features = model.encode_text_learn(prompts, tokenized_prompts, compound_prompts_text).float()
+    text_features = torch.stack(torch.chunk(text_features, dim=0, chunks=2), dim=1)
+    text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+
+    pr_sp_list, amaps_list = [], []
+    for items in tqdm(loader, desc=f"AnomalyCLIP_{short_ds}->DACL", leave=False):
+        image = items["img"].to(device)
+        with torch.cuda.amp.autocast():
+            image_features, patch_features = model.encode_image(image, features_list, DPAM_layer=20)
+        image_features = image_features.float()
+        image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+
+        text_probs = image_features.unsqueeze(1) @ text_features.permute(0, 2, 1)
+        text_probs = (text_probs / 0.07).softmax(-1)[:, 0, 1]
+
+        anomaly_map_list = []
+        for patch_feature in patch_features:
+            patch_feature = patch_feature.float()
+            patch_feature = patch_feature / patch_feature.norm(dim=-1, keepdim=True)
+            similarity, _ = AnomalyCLIP_lib.compute_similarity(patch_feature, text_features[0])
+            similarity_map = AnomalyCLIP_lib.get_similarity_map(similarity[:, 1:, :], image_size)
+            anomaly_map = (similarity_map[..., 1] + 1.0 - similarity_map[..., 0]) / 2.0
+            anomaly_map_list.append(anomaly_map)
+
+        anomaly_map = torch.stack(anomaly_map_list, dim=0).sum(dim=0)
+        amap_np = anomaly_map.float().cpu().numpy()
+        sp_np = text_probs.float().cpu().numpy()
+        if sp_np.ndim == 0:
+            sp_np = np.array([float(sp_np)])
+
+        for b in range(image.shape[0]):
+            smooth_m = gaussian_filter(amap_np[b], sigma=4.0)
+            amaps_list.append(smooth_m.astype(np.float16))
+            pr_sp_list.append(float(sp_np[b]))
+
+    amaps_norm = norm01(np.stack(amaps_list, axis=0).astype(np.float32))
+    amaps_list.clear()
+    final_sp = np.array(pr_sp_list, dtype=np.float32)
+    return amaps_norm, final_sp, source_th
+
+
+@torch.no_grad()
+def infer_bayespfl_on_dacl(short_ds, device):
+    BAYESPFL_DIR = "/home/skye/data/Skye/Bayes-PFL-main"
+    orig_cwd = os.getcwd()
+    os.chdir(BAYESPFL_DIR)
+    if BAYESPFL_DIR not in sys.path:
+        sys.path.insert(0, BAYESPFL_DIR)
+    try:
+        from models.VPB import Context_Prompting, TextEncoder
+        from models.model_CLIP import Load_CLIP, tokenize
+        from run_comp_bayespfl import get_bayespfl_transform
+
+        args = argparse.Namespace(
+            dataset=short_ds,
+            model="ViT-L-14-336",
+            pretrained="openai",
+            features_list=[6, 12, 18, 24],
+            config_path=os.path.join(BAYESPFL_DIR, "open_clip_local/model_configs/ViT-L-14-336.json"),
+            pretrained_path=os.path.join(BAYESPFL_DIR, "pretrained_weight/ViT-L-14-336px.pt"),
+            num_flows=10,
+            prompt_context_len=5,
+            prompt_num=3,
+            prompt_state_len=5,
+            sample_num=5,
+            image_size=518,
+            device_id=0,
+        )
+        with open(args.config_path, "r") as f:
+            model_configs = json.load(f)
+        args.vision_width = model_configs["vision_cfg"]["width"]
+        args.text_width = model_configs["text_cfg"]["width"]
+        args.embed_dim = model_configs["embed_dim"]
+
+        model_clip, _, _ = Load_CLIP(args.image_size, args.pretrained_path, device=device)
+        model_clip.to(device)
+        model_clip.eval()
+
+        PFL_TextEncoder = TextEncoder(model_clip, args)
+        MyModel = Context_Prompting(args=args).to(device)
+
+        ckpt_dir = os.path.join(CUR_DIR, "outputs", f"comp_bayespfl_{short_ds}")
+        with open(os.path.join(ckpt_dir, "test_metrics.json"), "r", encoding="utf-8") as f:
+            src_meta = json.load(f)
+        source_th = float(src_meta.get("val_best_th", src_meta["in_domain_test"].get("Best-Th", 0.35)))
+
+        ckpt = torch.load(os.path.join(ckpt_dir, "best_model.pth"), map_location=device)
+        MyModel.load_state_dict(ckpt["MyModel"])
+        stage = ckpt.get("stage", 1)
+        MyModel.eval()
+        MyModel.zk_n = None
+        MyModel.zk_a = None
+
+        preprocess = get_bayespfl_transform(518)
+        dataset = DACL10kCustomValDataset(preprocess)
+        loader = data.DataLoader(dataset, batch_size=16, shuffle=False, num_workers=4, pin_memory=True)
+
+        R_tot = args.prompt_num * args.sample_num
+        pr_sp_list, amaps_list = [], []
+        for items in tqdm(loader, desc=f"BayesPFL_{short_ds}->DACL", leave=False):
+            images = items["img"].to(device)
+            bsz = images.shape[0]
+            with torch.cuda.amp.autocast():
+                image_features_all, _, patch_tokens_all = model_clip.encode_image(images, args.features_list)
+            image_features_all = image_features_all.float()
+            patch_tokens_all = [pt.float() for pt in patch_tokens_all]
+
+            for b in range(bsz):
+                img_feat_b = image_features_all[b:b+1]
+                patch_tok_b = [pt[b:b+1] for pt in patch_tokens_all]
+                cls_b = ["bridge"]
+                text_embeddings, _ = MyModel.forward_ensemble(PFL_TextEncoder, img_feat_b, patch_tok_b, cls_b, device, tokenize, mode="test")
+                pro_img, anomaly_maps_list = MyModel(text_embeddings, img_feat_b, patch_tok_b, stage=stage, mode="test")
+                pro_img = pro_img.squeeze(2)
+                text_probs = torch.stack([pro_img[:, :R_tot], pro_img[:, R_tot:]], dim=-1).softmax(dim=-1)
+                temp_cls = float(text_probs[0, :, 1].mean().item())
+
+                anomaly_maps = []
+                for num in range(len(anomaly_maps_list)):
+                    anomaly_map = anomaly_maps_list[num]
+                    amap_layer = torch.stack([anomaly_map[:, :R_tot], anomaly_map[:, R_tot:]], dim=2).softmax(dim=2)[:, :, 1].mean(dim=1)
+                    anomaly_maps.append(amap_layer.float().cpu().numpy()[0])
+
+                amap_2d = np.mean(anomaly_maps, axis=0)
+                smooth_m = gaussian_filter(amap_2d, sigma=8.0)
+                amaps_list.append(smooth_m.astype(np.float16))
+                pr_sp_list.append(float(temp_cls))
+
+        raw_sp = np.array(pr_sp_list, dtype=np.float32)
+        amaps_norm = norm01(np.stack(amaps_list, axis=0).astype(np.float32))
+        amaps_list.clear()
+        sp_norm = (raw_sp - raw_sp.min()) / (raw_sp.max() - raw_sp.min() + 1e-8)
+        flat_amaps = amaps_norm.reshape(amaps_norm.shape[0], -1)
+        kth = max(-2000, -flat_amaps.shape[1])
+        pr_sp_tmp = np.partition(flat_amaps, kth=kth, axis=1)[:, kth:].mean(axis=1)
+        pr_sp_tmp = (pr_sp_tmp - pr_sp_tmp.min()) / (pr_sp_tmp.max() - pr_sp_tmp.min() + 1e-8)
+        final_sp = (0.5 * sp_norm + 0.5 * pr_sp_tmp).astype(np.float32)
+        return amaps_norm, final_sp, source_th
+    finally:
+        os.chdir(orig_cwd)
+
+
+@torch.no_grad()
+def infer_mixercseg_on_dacl(short_ds, device):
+    MIXERCSEG_DIR = "/home/skye/data/Skye/MixerCSeg"
+    orig_cwd = os.getcwd()
+    os.chdir(MIXERCSEG_DIR)
+    if MIXERCSEG_DIR not in sys.path:
+        sys.path.insert(0, MIXERCSEG_DIR)
+    try:
+        from models import build_MixerCSeg
+        from run_comp_mixercseg import get_mixercseg_transform
+
+        args_model = argparse.Namespace(
+            BCELoss_ratio=0.87,
+            DiceLoss_ratio=0.13,
+            Norm_Type="GN",
+            device="cuda",
+            load_width=512,
+            load_height=512,
+        )
+        model, _ = build_MixerCSeg(args_model)
+        model.to(device)
+    finally:
+        os.chdir(orig_cwd)
+
+    preprocess = get_mixercseg_transform(512)
+    dataset = DACL10kCustomValDataset(preprocess)
+    loader = data.DataLoader(dataset, batch_size=8, shuffle=False, num_workers=4, pin_memory=True)
+
+    ckpt_dir = os.path.join(CUR_DIR, "outputs", f"comp_mixercseg_{short_ds}")
+    with open(os.path.join(ckpt_dir, "test_metrics.json"), "r", encoding="utf-8") as f:
+        src_meta = json.load(f)
+    source_th = float(src_meta.get("val_best_th", src_meta["in_domain_test"].get("Best-Th", 0.35)))
+
+    model.load_state_dict(torch.load(os.path.join(ckpt_dir, "best_model.pth"), map_location=device))
+    model.eval()
+
+    amaps_list = []
+    for items in tqdm(loader, desc=f"MixerCSeg_{short_ds}->DACL", leave=False):
+        imgs = items["img"].to(device)
+        out = model(imgs)
+        probs = torch.sigmoid(out)
+        probs_up = F.interpolate(probs, size=(518, 518), mode="bilinear", align_corners=False)[:, 0]
+        amap_np = probs_up.float().cpu().numpy()
+        for b in range(imgs.shape[0]):
+            sm = gaussian_filter(amap_np[b], sigma=1.5)
+            amaps_list.append(sm.astype(np.float16))
+
+    amaps_norm = norm01(np.stack(amaps_list, axis=0).astype(np.float32))
+    amaps_list.clear()
+    final_sp = topk_pool_np(amaps_norm, ratio=0.01)
+    return amaps_norm, final_sp, source_th
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--method", type=str, required=True, choices=["adaptclip", "wpformer"])
+    parser.add_argument(
+        "--method",
+        type=str,
+        required=True,
+        choices=["adaptclip", "wpformer", "dinomaly", "anomalyclip", "bayespfl", "mixercseg"],
+    )
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -487,14 +777,15 @@ def main():
     with open(out_path, "r", encoding="utf-8") as f:
         results = json.load(f)
 
-    if args.method == "adaptclip":
-        m_key = "comp_adaptclip"
-        m_label = "AdaptCLIP (AAAI 2026)"
-        infer_fn = infer_adaptclip_on_dacl
-    else:
-        m_key = "comp_wpformer"
-        m_label = "WPFormer (CVPR 2025)"
-        infer_fn = infer_wpformer_on_dacl
+    method_dispatch = {
+        "adaptclip": ("comp_adaptclip", "AdaptCLIP (AAAI 2026)", infer_adaptclip_on_dacl),
+        "wpformer": ("comp_wpformer", "WPFormer (CVPR 2025)", infer_wpformer_on_dacl),
+        "dinomaly": ("comp_dinomaly", "Dinomaly (CVPR 2025)", infer_dinomaly_on_dacl),
+        "anomalyclip": ("comp_anomalyclip", "AnomalyCLIP (ICLR 2024)", infer_anomalyclip_on_dacl),
+        "bayespfl": ("comp_bayespfl", "Bayes-PFL (CVPR 2025)", infer_bayespfl_on_dacl),
+        "mixercseg": ("comp_mixercseg", "MixerCSeg (CVPR 2026)", infer_mixercseg_on_dacl),
+    }
+    m_key, m_label, infer_fn = method_dispatch[args.method]
 
     for short_ds, dir_key in [("S2DS", "S2DS_to_DACL10k"), ("CODEBRIM", "CODEBRIM_to_DACL10k")]:
         t0 = time.time()
